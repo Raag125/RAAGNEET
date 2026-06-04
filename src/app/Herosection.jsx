@@ -54,7 +54,7 @@ function HeroBackground() {
   return (
     <div className="absolute inset-0 -z-20 overflow-hidden pointer-events-none">
       {/* Gradient orbs */}
-      <div className="absolute inset-0" style={{ filter: "blur(100px)" }}>
+      <div className="absolute inset-0 blur-[50px] md:blur-[100px] will-change-transform translate-z-0">
         <div className="hero-blob hero-blob-1 absolute rounded-full top-[5%] left-[10%] w-[50vw] max-w-[700px] aspect-square" style={{ background: "radial-gradient(circle, rgba(0,255,224,0.15), transparent 70%)" }} />
         <div className="hero-blob hero-blob-2 absolute rounded-full bottom-[8%] right-[5%] w-[45vw] max-w-[650px] aspect-square" style={{ background: "radial-gradient(circle, rgba(59,130,246,0.12), transparent 70%)" }} />
         <div className="hero-blob hero-blob-3 absolute rounded-full top-[35%] right-[15%] w-[30vw] max-w-[450px] aspect-square" style={{ background: "radial-gradient(circle, rgba(168,85,247,0.1), transparent 70%)" }} />
@@ -63,10 +63,9 @@ function HeroBackground() {
 
       {/* Aurora mesh */}
       <div
-        className="hero-aurora absolute inset-0 opacity-[0.15]"
+        className="hero-aurora absolute inset-0 opacity-[0.15] blur-[40px] md:blur-[80px] will-change-transform translate-z-0"
         style={{
           background: "conic-gradient(from 0deg at 50% 50%, rgba(0,255,224,0.08) 0deg, transparent 80deg, rgba(59,130,246,0.06) 160deg, transparent 240deg, rgba(168,85,247,0.06) 320deg, rgba(0,255,224,0.08) 360deg)",
-          filter: "blur(80px)",
         }}
       />
 

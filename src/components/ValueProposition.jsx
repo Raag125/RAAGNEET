@@ -37,7 +37,6 @@ export default function ValueProposition() {
     <section ref={containerRef} className="relative w-full h-[180vh] bg-transparent">
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden perspective-1000">
         
-        
         <motion.div 
           style={{ scale: containerScale }}
           className="relative z-10 text-center max-w-5xl px-6"
@@ -52,7 +51,6 @@ export default function ValueProposition() {
             </motion.div>
             
             <motion.div
-              style={{ opacity: line2Opacity, y: line2Y, scale: line2Scale, filter: line2Blur }}
               className="inline-block w-full mt-4 text-transparent bg-clip-text"
               style={{
                 opacity: line2Opacity, y: line2Y, scale: line2Scale, filter: line2Blur,
