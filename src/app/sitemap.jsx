@@ -1,6 +1,6 @@
 export default function sitemap() {
-  // IMPORTANT: Replace this with your actual live domain name
-  const baseUrl = 'https://your-domain.com';
+  // The live domain name for the sitemap URLs
+  const baseUrl = 'https://raagneet.com';
 
   return [
     {
