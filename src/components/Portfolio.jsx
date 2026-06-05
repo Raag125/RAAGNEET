@@ -79,19 +79,19 @@ export default function Portfolio() {
 
   return (
     <section id="work" ref={containerRef} style={{ height: `${projects.length * 100}vh` }} className="relative w-full">
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden py-12">
-        <div className="max-w-7xl w-full mx-auto px-6">
+      <div className="sticky top-0 h-[100svh] w-full flex flex-col overflow-hidden py-4 sm:py-8 lg:py-12 bg-[#010103]">
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 h-full flex flex-col">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="mb-8 md:mb-16"
+            className="mb-4 sm:mb-8 shrink-0 text-center lg:text-left pt-16 lg:pt-0"
           >
-            <h2 className="text-[clamp(2rem,5vw,3rem)] font-bold text-white mb-4 md:mb-6 leading-tight">
+            <h2 className="text-[clamp(1.75rem,4vw,3rem)] font-bold text-white mb-2 md:mb-4 leading-tight">
               The <span className="text-gradient">Portfolio</span> Matrix
             </h2>
-            <p className="text-gray-400 max-w-2xl text-lg">
+            <p className="text-gray-400 max-w-2xl text-sm md:text-lg mx-auto lg:mx-0">
               We don't build pretty templates. We engineer digital assets that perform. 
               Scroll down to explore our interactive showcase.
             </p>
@@ -102,7 +102,7 @@ export default function Portfolio() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.2 }}
-            className="glass-card rounded-3xl p-4 md:p-8 flex flex-col lg:flex-row gap-4 md:gap-8 relative overflow-hidden min-h-[50vh] lg:h-[70vh] max-h-[800px] w-full"
+            className="glass-card rounded-3xl p-3 sm:p-4 md:p-8 flex flex-col lg:flex-row gap-4 md:gap-8 relative overflow-hidden flex-1 w-full min-h-0"
           >
             
             {/* Navigation Sidebar */}

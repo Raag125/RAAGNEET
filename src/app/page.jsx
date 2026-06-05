@@ -9,6 +9,7 @@ import ValueProposition from "@/components/ValueProposition";
 import Portfolio from "@/components/Portfolio";
 import ContactUs from "@/components/ContactUs";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
+import FpsMeter from "@/components/FpsMeter";
 
 /* ── Inject glass keyframes once ── */
 function useGlassStyles() {
@@ -69,92 +70,62 @@ function usePointer() {
   return pos;
 }
 
-export default function Home() {
-  useGlassStyles();
+function Spotlight() {
   const pointer = usePointer();
-
   return (
-    <main className="relative bg-[#010103] w-full text-white font-sans selection:bg-primary/30 flex flex-col">
-      {/* ── Fixed glass background ── */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        {/* Blob layer */}
-        <div className="absolute inset-0" style={{ filter: "blur(90px)" }}>
-          <div className="hgb-blob hgb-1 absolute rounded-full top-[8%] left-[12%] w-[50vw] max-w-[700px] aspect-square" style={{ background: "rgba(255,255,255,0.04)" }} />
-          <div className="hgb-blob hgb-2 absolute rounded-full bottom-[5%] right-[8%] w-[42vw] max-w-[600px] aspect-square" style={{ background: "rgba(148,163,184,0.035)" }} />
-          <div className="hgb-blob hgb-3 absolute rounded-full top-[35%] right-[20%] w-[35vw] max-w-[500px] aspect-square" style={{ background: "rgba(255,255,255,0.03)" }} />
-          <div className="hgb-blob hgb-4 absolute rounded-full bottom-[25%] left-[5%] w-[38vw] max-w-[540px] aspect-square" style={{ background: "rgba(148,163,184,0.03)" }} />
-        </div>
+    <>
+      <div
+        className="absolute inset-0 transition-opacity duration-700"
+        style={{
+          background: `radial-gradient(circle 500px at ${pointer.x * 100}% ${pointer.y * 100}%, rgba(255,255,255,0.06), transparent 70%)`,
+          opacity: pointer.active ? 1 : 0,
+        }}
+      />
+      <div
+        className="absolute inset-0 transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(circle 180px at ${pointer.x * 100}% ${pointer.y * 100}%, rgba(165,243,252,0.04), transparent 70%)`,
+          opacity: pointer.active ? 1 : 0,
+        }}
+      />
+    </>
+  );
+}
 
-        {/* Subtle conic aurora */}
-        <div
-          className="absolute inset-0 opacity-[0.12]"
-          style={{
-            background: "conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0.04) 0deg, transparent 90deg, rgba(255,255,255,0.025) 180deg, transparent 270deg, rgba(255,255,255,0.04) 360deg)",
-            filter: "blur(60px)",
-          }}
-        />
-
-        {/* Mouse-following spotlight */}
-        <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{
-            background: `radial-gradient(circle 500px at ${pointer.x * 100}% ${pointer.y * 100}%, rgba(255,255,255,0.06), transparent 70%)`,
-            opacity: pointer.active ? 1 : 0,
-          }}
-        />
-        <div
-          className="absolute inset-0 transition-opacity duration-500"
-          style={{
-            background: `radial-gradient(circle 180px at ${pointer.x * 100}% ${pointer.y * 100}%, rgba(165,243,252,0.04), transparent 70%)`,
-            opacity: pointer.active ? 1 : 0,
-          }}
-        />
-
-        {/* Subtle grid */}
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-            maskImage: "radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 75%)",
-            WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 75%)",
-          }}
-        />
-
-        {/* Grain texture */}
-        <div
-          className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
-          style={{
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-            backgroundRepeat: "repeat",
-            backgroundSize: "128px 128px",
-          }}
-        />
-
-        {/* Vignette */}
-        <div
-          className="absolute inset-0"
-          style={{ background: "radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(1,1,3,0.7) 100%)" }}
-        />
-      </div>
-
+export default function Home() {
+  return (
+    <main className="relative bg-[#010103] w-full text-white font-sans selection:bg-cyan-400/30 flex flex-col">
       {/* ── Content ── */}
       <HeroSection />
-      <div className="flex flex-col gap-24 sm:gap-32 relative z-10 w-full pt-16">
+      
+      <div className="flex flex-col relative z-10 w-full">
         <div id="what-we-build"><WhatWeBuild /></div>
         <div id="trust"><TrustSection /></div>
-        <div id="marquee"><MarqueeSection /></div>
+        <div id="marquee" className="py-24"><MarqueeSection /></div>
         <div id="value-proposition"><ValueProposition /></div>
         <div id="portfolio"><Portfolio /></div>
-        <div id="contact"><ContactUs /></div>
+        <div id="contact" className="mt-16 sm:mt-24"><ContactUs /></div>
       </div>
 
       <ScrollProgressBar />
+      <FpsMeter />
 
-      {/* Footer */}
-      <footer className="relative w-full flex flex-col items-center justify-center py-12 text-center text-gray-500 text-sm z-10">
-        <p>&copy; {new Date().getFullYear()} NeetWeb Premium Digital Agency. All rights reserved.</p>
-        <p className="mt-2">Engineered for conversion.</p>
+      {/* Sleek Minimal Footer */}
+      <footer className="relative w-full border-t border-white/[0.05] bg-[#010103] py-6 px-6 z-10">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-white/40 text-xs sm:text-sm font-syne">
+            &copy; {new Date().getFullYear()} NeetWeb. All rights reserved.
+          </p>
+          
+          <div className="group relative inline-block cursor-pointer">
+            <span className="block text-white/40 text-sm sm:text-base font-syne font-medium transition-colors duration-300 group-hover:text-cyan-400 pb-1.5">
+              Designer @NEET
+            </span>
+            <div className="absolute bottom-0 left-0 w-full h-[2px] overflow-hidden">
+              <span className="absolute inset-0 bg-cyan-400 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+            </div>
+          </div>
+        </div>
       </footer>
     </main>
   );

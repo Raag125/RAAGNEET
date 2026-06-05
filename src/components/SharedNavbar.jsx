@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import ThemePanel from "./ThemePanel";
 
 export default function SharedNavbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
+  const [secretClicks, setSecretClicks] = useState({ count: 0, lastTime: 0 });
 
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -44,7 +47,31 @@ export default function SharedNavbar() {
             : 'bg-[#0a0a0a]/30 backdrop-blur-md border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.3)] py-2 px-4 sm:px-6'
         }`}>
           {/* Logo */}
-          <Link href="/#hero" className="relative flex items-center gap-2.5 group z-10 shrink-0">
+          <Link 
+            href="/" 
+            onClick={(e) => {
+              const now = Date.now();
+              if (now - secretClicks.lastTime > 2000) {
+                // reset if took too long
+                setSecretClicks({ count: 1, lastTime: now });
+              } else {
+                const newCount = secretClicks.count + 1;
+                setSecretClicks({ count: newCount, lastTime: now });
+                if (newCount >= 3) {
+                  e.preventDefault();
+                  router.push('/secret-mobile-preview');
+                  setSecretClicks({ count: 0, lastTime: 0 });
+                  return;
+                }
+              }
+
+              if (pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className="relative flex items-center gap-2.5 group z-10 shrink-0"
+          >
             <div className="relative w-7 h-7 flex items-center justify-center">
               <div className="absolute inset-0 rounded-md bg-gradient-to-br from-[#00FFE0]/20 to-transparent group-hover:from-[#00FFE0]/30 transition-all duration-500" />
               <svg width="15" height="15" viewBox="0 0 18 18" fill="none" className="relative z-10">
@@ -53,7 +80,7 @@ export default function SharedNavbar() {
               </svg>
             </div>
             <span className="text-white/90 font-bold tracking-tight text-xs sm:text-sm">
-              NEET<span className="text-[#00FFE0] mx-[0.5px]">/</span>STUDIO
+              RAAGNEET
             </span>
           </Link>
 
@@ -103,6 +130,9 @@ export default function SharedNavbar() {
                 Momo
               </motion.button>
             </Link>
+            <div className="relative flex items-center justify-center">
+              <ThemePanel />
+            </div>
             <MobileMenuButton pathname={pathname} links={links} />
           </div>
         </div>

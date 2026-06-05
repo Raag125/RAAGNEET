@@ -59,7 +59,7 @@ export default function ScrollProgressBar() {
         <motion.div
           animate={{ height: `${progress}%` }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#00FFE0]/60 to-[#00FFE0]/20 rounded-full"
+          className="absolute top-0 left-0 w-full bg-gradient-to-b from-[#00FFE0]/60 to-[#00FFE0]/20 rounded-full"
         />
       </div>
 
