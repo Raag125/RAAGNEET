@@ -27,9 +27,8 @@ export default function MobilePreviewPage() {
     <div className="h-screen w-screen overflow-hidden bg-[#010103] flex flex-col items-center justify-center pt-16">
       {/* Header / Controls */}
       <div className="fixed top-0 left-0 w-full p-4 flex justify-between items-center z-[100] bg-black/50 backdrop-blur-md border-b border-white/10">
-        <div className="hidden sm:block text-white/50 text-sm font-medium tracking-widest uppercase">
-          Secret Mobile Preview Mode
-        </div>
+        {/* Left spacing to push the input to the right if needed, or we can just justify-end */}
+        <div className="flex-1"></div>
         <div className="flex gap-2">
           <input 
             type="text" 
