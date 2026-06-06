@@ -578,6 +578,72 @@ function AutomovingObjects() {
   );
 }
 
+function MobileHeroSection() {
+  const { theme } = useTheme();
+  return (
+    <section id="hero-mobile" className="relative w-full min-h-screen bg-[#010103] flex flex-col items-center justify-center pt-32 pb-24 px-6 overflow-hidden md:hidden">
+      {/* Simplified Mobile Background */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <ThemeBackground />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#010103] via-transparent to-[#010103]" />
+      </div>
+
+      <div className="z-20 w-full max-w-lg mx-auto flex flex-col items-start gap-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex items-center gap-4">
+            <div className="h-[1px] w-8 bg-cyan-400/50" />
+            <span className="text-cyan-400 text-[10px] font-bold tracking-[0.3em] uppercase font-syne">Transform Your Business</span>
+          </div>
+        </motion.div>
+
+        <motion.h1 
+          initial={{ opacity: 0, y: 30 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="font-bricolage text-5xl font-black italic text-white tracking-tighter leading-[1.1]"
+        >
+          THE FUTURE <br/>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient">OF YOUR DIGITAL</span> <br/>
+          PRESENCE
+        </motion.h1>
+
+        <motion.p 
+          initial={{ opacity: 0 }} 
+          whileInView={{ opacity: 1 }} 
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="text-white/60 text-base leading-relaxed font-light pr-4"
+        >
+          We bridge the gap between imagination and execution, building high-performance digital assets that define the new standard.
+        </motion.p>
+
+        <motion.button 
+          initial={{ opacity: 0, scale: 0.95 }} 
+          whileInView={{ opacity: 1, scale: 1 }} 
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, delay: 0.5, type: "spring" }}
+          onClick={() => {
+            const contact = document.getElementById("contact");
+            if (contact) contact.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="w-full mt-4 px-6 py-4 rounded-full bg-white text-black font-syne font-bold uppercase tracking-wider text-[13px] shadow-[0_0_30px_rgba(0,255,224,0.2)] flex justify-center items-center gap-2"
+        >
+          Claim Your Free Custom Demo
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </motion.button>
+      </div>
+    </section>
+  );
+}
+
 export default function HeroSection() {
   useInjectHeroStyles();
   const containerRef = useRef(null);
@@ -588,17 +654,21 @@ export default function HeroSection() {
   });
 
   return (
-    <section
-      ref={containerRef}
-      id="hero"
-      className="relative w-full h-[500vh] bg-[#010103]"
-    >
-      <div className="sticky top-0 h-screen w-full overflow-hidden isolate">
-        <ThemeBackground />
-        <HeroBackground />
-        <AutomovingObjects />
-        <HeroOverlay scrollProgress={scrollYProgress} />
-      </div>
-    </section>
+    <>
+      <MobileHeroSection />
+
+      <section
+        ref={containerRef}
+        id="hero"
+        className="relative w-full h-[500vh] bg-[#010103] hidden md:block"
+      >
+        <div className="sticky top-0 h-screen w-full overflow-hidden isolate">
+          <ThemeBackground />
+          <HeroBackground />
+          <AutomovingObjects />
+          <HeroOverlay scrollProgress={scrollYProgress} />
+        </div>
+      </section>
+    </>
   );
 }
