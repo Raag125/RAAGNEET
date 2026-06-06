@@ -2,9 +2,12 @@ import { Resend } from "resend";
 import WelcomeEmail from "@/emails/WelcomeEmail";
 
 export async function POST(req) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
   try {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is missing from environment variables");
+    }
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     const body = await req.json();
     const { name, email, service } = body;
 
