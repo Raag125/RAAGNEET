@@ -291,32 +291,22 @@ function HeroOverlay({ scrollProgress }) {
   // Line 1: Transform Your Business (Fades with Line 2)
   const s1L1Opacity = useTransform(scrollProgress, [0.15, 0.25], [1, 0]);
   const s1L1Y = useTransform(scrollProgress, [0.15, 0.25], [0, -30]);
-  const s1L1Blur = useTransform(scrollProgress, [0.15, 0.25], [0, 15]);
-  const s1L1Filter = useTransform(s1L1Blur, v => `blur(${v}px)`);
 
   // Line 2: THE FUTURE OF YOUR
   const s1L2Opacity = useTransform(scrollProgress, [0.15, 0.25], [1, 0]);
   const s1L2Y = useTransform(scrollProgress, [0.15, 0.25], [0, -30]);
-  const s1L2Blur = useTransform(scrollProgress, [0.15, 0.25], [0, 15]);
-  const s1L2Filter = useTransform(s1L2Blur, v => `blur(${v}px)`);
 
   // Line 3: DIGITAL
   const s1L3Opacity = useTransform(scrollProgress, [0.25, 0.35], [1, 0]);
   const s1L3Y = useTransform(scrollProgress, [0.25, 0.35], [0, -30]);
-  const s1L3Blur = useTransform(scrollProgress, [0.25, 0.35], [0, 15]);
-  const s1L3Filter = useTransform(s1L3Blur, v => `blur(${v}px)`);
 
   // Line 4: PRESENCE
   const s1L4Opacity = useTransform(scrollProgress, [0.30, 0.40], [1, 0]);
   const s1L4Y = useTransform(scrollProgress, [0.30, 0.40], [0, -30]);
-  const s1L4Blur = useTransform(scrollProgress, [0.30, 0.40], [0, 15]);
-  const s1L4Filter = useTransform(s1L4Blur, v => `blur(${v}px)`);
 
   // Line 5: Paragraph & Scroll Indicator
   const s1L5Opacity = useTransform(scrollProgress, [0.35, 0.45], [1, 0]);
   const s1L5Y = useTransform(scrollProgress, [0.35, 0.45], [0, -30]);
-  const s1L5Blur = useTransform(scrollProgress, [0.35, 0.45], [0, 15]);
-  const s1L5Filter = useTransform(s1L5Blur, v => `blur(${v}px)`);
 
   // Scene 2 Base Wrapper
   const scene2Visibility = useTransform(scrollProgress, p => p < 0.45 ? 'hidden' : 'visible');
@@ -326,14 +316,10 @@ function HeroOverlay({ scrollProgress }) {
   const scene2Text1Opacity = useTransform(scrollProgress, [0.45, 0.55], [0, 1]);
   const scene2Text1Y = useTransform(scrollProgress, [0.45, 0.55], [-80, 0]);
   const scene2Text1Scale = useTransform(scrollProgress, [0.45, 0.55], [1.5, 1]);
-  const scene2Text1Blur = useTransform(scrollProgress, [0.45, 0.55], [20, 0]);
-  const scene2Text1Filter = useTransform(scene2Text1Blur, v => `blur(${v}px)`);
 
   const scene2Text2Opacity = useTransform(scrollProgress, [0.55, 0.65], [0, 1]);
   const scene2Text2Y = useTransform(scrollProgress, [0.55, 0.65], [-80, 0]);
   const scene2Text2Scale = useTransform(scrollProgress, [0.55, 0.65], [1.5, 1]);
-  const scene2Text2Blur = useTransform(scrollProgress, [0.55, 0.65], [20, 0]);
-  const scene2Text2Filter = useTransform(scene2Text2Blur, v => `blur(${v}px)`);
 
   const scene2BtnOpacity = useTransform(scrollProgress, [0.65, 0.75], [0, 1]);
   const scene2BtnY = useTransform(scrollProgress, [0.65, 0.75], [60, 0]);
@@ -351,7 +337,7 @@ function HeroOverlay({ scrollProgress }) {
           */
           className="w-full flex flex-col items-start text-left pointer-events-none"
         >
-          <motion.div style={{ opacity: s1L1Opacity, y: s1L1Y, filter: s1L1Filter }}>
+          <motion.div style={{ opacity: s1L1Opacity, y: s1L1Y }}>
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -388,7 +374,7 @@ function HeroOverlay({ scrollProgress }) {
 
                      Change "0px" to "50px" to shift right, or "-50px" to shift left!
                 */
-                style={{ opacity: s1L2Opacity, y: s1L2Y, filter: s1L2Filter, marginLeft: "0px" }}
+                style={{ opacity: s1L2Opacity, y: s1L2Y, marginLeft: "0px" }}
               >
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
@@ -400,7 +386,7 @@ function HeroOverlay({ scrollProgress }) {
                   <ThemeTextWrapper theme={theme}>THE FUTURE OF YOUR</ThemeTextWrapper>
                 </motion.span>
               </motion.div>
-              <motion.div style={{ opacity: s1L3Opacity, y: s1L3Y, filter: s1L3Filter }} className="overflow-hidden flex items-baseline gap-4 pr-12 -mr-12 py-2 -my-2">
+              <motion.div style={{ opacity: s1L3Opacity, y: s1L3Y }} className="overflow-hidden flex items-baseline gap-4 pr-12 -mr-12 py-2 -my-2">
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.55 } }}
@@ -434,7 +420,7 @@ function HeroOverlay({ scrollProgress }) {
                   className="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_20px_rgba(0,255,224,0.8)] hidden sm:block"
                 />
               </motion.div>
-              <motion.div style={{ opacity: s1L4Opacity, y: s1L4Y, filter: s1L4Filter }} className="overflow-hidden pr-12 -mr-12 py-2 -my-2">
+              <motion.div style={{ opacity: s1L4Opacity, y: s1L4Y }} className="overflow-hidden pr-12 -mr-12 py-2 -my-2">
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.7 } }}
@@ -448,7 +434,7 @@ function HeroOverlay({ scrollProgress }) {
             </motion.h1>
           </motion.div>
 
-          <motion.div style={{ opacity: s1L5Opacity, y: s1L5Y, filter: s1L5Filter }}>
+          <motion.div style={{ opacity: s1L5Opacity, y: s1L5Y }}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -487,10 +473,10 @@ function HeroOverlay({ scrollProgress }) {
           />
 
           <h2 className="font-bricolage font-black text-white text-4xl sm:text-6xl md:text-8xl mb-12 tracking-tighter leading-tight italic flex flex-col items-center">
-            <motion.span style={{ opacity: scene2Text1Opacity, y: scene2Text1Y, scale: scene2Text1Scale, filter: scene2Text1Filter }}>
+            <motion.span style={{ opacity: scene2Text1Opacity, y: scene2Text1Y, scale: scene2Text1Scale }}>
               READY TO
             </motion.span>
-            <motion.span style={{ opacity: scene2Text2Opacity, y: scene2Text2Y, scale: scene2Text2Scale, filter: scene2Text2Filter }} className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40 pr-4 inline-block mt-2">
+            <motion.span style={{ opacity: scene2Text2Opacity, y: scene2Text2Y, scale: scene2Text2Scale }} className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40 pr-4 inline-block mt-2">
               EVOLVE?
             </motion.span>
           </h2>
