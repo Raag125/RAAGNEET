@@ -18,8 +18,6 @@ function ParticleSystem({ count = 80 }) {
   }, [count]);
 
   useFrame(({ clock }) => {
-    tickRef.current++;
-    if (tickRef.current % 2 !== 0) return;
     if (mesh.current) {
       const t = clock.getElapsedTime();
       mesh.current.rotation.y = t * 0.02;
@@ -55,8 +53,8 @@ export default function ParticleField({ count = 80, className = "" }) {
     <div className={`absolute inset-0 pointer-events-none ${className}`}>
       <Canvas
         camera={{ position: [0, 0, 5], fov: 60 }}
-        gl={{ antialias: false, alpha: true, powerPreference: "low-power" }}
-        dpr={[1, 1]}
+        gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
+        dpr={[1, 1.5]}
       >
         <ParticleSystem count={count} />
       </Canvas>

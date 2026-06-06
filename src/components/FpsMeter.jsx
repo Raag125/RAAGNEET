@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function FpsMeter() {
   const [fps, setFps] = useState(0);
+  const pathname = usePathname();
 
   useEffect(() => {
     let frameCount = 0;
@@ -28,11 +30,13 @@ export default function FpsMeter() {
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
+  if (pathname !== "/secret-mobile-preview") return null;
+
   const colorClass = fps >= 60 ? "text-[#00FFE0]" : fps >= 30 ? "text-yellow-400" : "text-red-500";
   const bgClass = fps >= 60 ? "bg-[#00FFE0]" : fps >= 30 ? "bg-yellow-400" : "bg-red-500";
 
   return (
-    <div className="fixed top-4 right-4 z-[9999] bg-black/40 backdrop-blur-sm border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2 pointer-events-none shadow-lg">
+    <div className="fixed bottom-4 right-4 z-[9999] bg-black/40 backdrop-blur-sm border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2 pointer-events-none shadow-lg">
       <div className={`w-2 h-2 rounded-full ${bgClass} animate-pulse`} />
       <span className={`text-xs font-mono font-bold ${colorClass}`}>
         {fps} FPS
