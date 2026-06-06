@@ -7,7 +7,7 @@ import TiltCard from "@/components/animations/TiltCard";
 import MagneticButton from "@/components/animations/MagneticButton";
 
 const contactInfo = [
-  { icon: Mail, label: "Email", value: "hello@neets.studio", href: "mailto:hello@neets.studio" },
+  { icon: Mail, label: "Email", value: "hello@raagneet.com", href: "mailto:hello@raagneet.com" },
   { icon: MapPin, label: "Location", value: "Remote — Global", href: "#" },
   { icon: Phone, label: "Phone", value: "+1 (555) 000-0000", href: "tel:+15550000000" },
 ];
