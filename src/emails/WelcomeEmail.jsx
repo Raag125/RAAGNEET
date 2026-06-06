@@ -40,7 +40,7 @@ export default function WelcomeEmail({ name = "there", service = "Premium Websit
             <Text style={footer}>
               Best regards,<br />
               <strong>The RAAGNEET Team</strong><br />
-              <Link href="https://www.raagneet.com" style={anchor}>www.raagneet.com</Link>
+              <Link href="https://raagneet.com" style={anchor}>raagneet.com</Link>
             </Text>
           </Section>
         </Container>
