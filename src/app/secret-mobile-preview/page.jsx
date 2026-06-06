@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import FpsMeter from "@/components/FpsMeter";
 
 export default function MobilePreviewPage() {
   const [url, setUrl] = useState("/");
@@ -76,7 +75,6 @@ export default function MobilePreviewPage() {
         
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#00FFE0] rounded-full blur-[120px] opacity-20 -z-10 pointer-events-none" />
       </motion.div>
-      <FpsMeter />
     </div>
   );
 }
