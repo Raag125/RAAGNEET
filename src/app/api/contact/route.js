@@ -26,7 +26,7 @@ export async function POST(req) {
     }[service] || "Project";
 
     const data = await resend.emails.send({
-      from: "RAAGNEET <onboarding@resend.dev>",
+      from: "RAAGNEET <hello@raagneet.com>",
       to: [email],
       subject: "Thanks for connecting with RAAGNEET! We'll contact you soon.",
       react: WelcomeEmail({ name, service: serviceDisplay }),
