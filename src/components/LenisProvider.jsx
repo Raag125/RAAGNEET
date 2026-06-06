@@ -6,6 +6,9 @@ export default function LenisProvider({ children }) {
   const lenisRef = useRef(null);
 
   useEffect(() => {
+    // Disable Lenis inside iframes to fix severe scroll lag during CSS scaling
+    if (window !== window.parent) return;
+
     // Initialize Lenis for buttery-smooth scrolling
     const lenis = new Lenis({
       duration: 1.2,

@@ -48,7 +48,7 @@ export default function MobilePreviewPage() {
         className="relative"
       >
         {/* iPhone Bezel */}
-        <div className="relative w-[375px] h-[812px] bg-black rounded-[50px] border-[12px] border-[#1a1a1a] shadow-[0_0_0_1px_#333,0_0_50px_rgba(0,255,224,0.1)] overflow-hidden flex flex-col isolate">
+        <div className="relative w-[375px] h-[812px] bg-black rounded-[50px] border-[12px] border-[#1a1a1a] shadow-[0_0_0_1px_#333,0_0_50px_rgba(0,255,224,0.1)] overflow-hidden flex flex-col isolate transform-gpu will-change-transform">
           {/* Dynamic Island Notch */}
           <div className="absolute top-2 left-1/2 -translate-x-1/2 w-[120px] h-[35px] bg-black rounded-full z-20" />
           
