@@ -40,10 +40,35 @@ export default function ContactUs() {
   const [formState, setFormState] = useState("idle");
   const [focusedField, setFocusedField] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormState("submitting");
-    setTimeout(() => setFormState("success"), 1500);
+
+    const formData = new FormData(e.target);
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      service: formData.get("service"),
+      message: formData.get("message"),
+    };
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        setFormState("success");
+      } else {
+        console.error("Failed to submit");
+        setFormState("idle"); // or handle error state
+      }
+    } catch (error) {
+      console.error(error);
+      setFormState("idle");
+    }
   };
 
   return (
@@ -230,6 +255,7 @@ export default function ContactUs() {
                             <input
                               required
                               type={field.type}
+                              name={field.key}
                               onFocus={() => setFocusedField(field.key)}
                               onBlur={() => setFocusedField(null)}
                               className="relative w-full bg-transparent px-4 py-3.5 text-white placeholder:text-white/20 focus:outline-none text-sm"
@@ -245,6 +271,7 @@ export default function ContactUs() {
                         What are you looking for?
                       </label>
                       <motion.select
+                        name="service"
                         animate={
                           focusedField === "service"
                             ? { borderColor: "rgba(0,255,224,0.25)" }
@@ -279,6 +306,7 @@ export default function ContactUs() {
                         />
                         <textarea
                           required
+                          name="message"
                           rows={5}
                           onFocus={() => setFocusedField("message")}
                           onBlur={() => setFocusedField(null)}
