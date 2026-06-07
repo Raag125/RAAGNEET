@@ -72,7 +72,7 @@ export default function ContactUs() {
   };
 
   return (
-    <section className="relative w-full h-auto py-16 sm:py-24 flex items-center justify-center overflow-hidden bg-[#030305]">
+    <section id="contact" className="relative w-full min-h-[100svh] py-16 lg:py-0 flex items-center justify-center overflow-hidden bg-[#030305]">
       {/* ===== ANIMATED BACKGROUND LAYER ===== */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Drifting gradient orbs */}

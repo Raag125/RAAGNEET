@@ -67,23 +67,23 @@ export default function ValueProposition() {
   });
 
   // Entrance
-  const line1EnterOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1]);
-  const line1EnterY = useTransform(scrollYProgress, [0.1, 0.25], [50, 0]);
-  const line1EnterScale = useTransform(scrollYProgress, [0.1, 0.25], [0.8, 1]);
-  const line1EnterBlur = useTransform(scrollYProgress, [0.1, 0.25], [20, 0]);
+  const line1EnterOpacity = useTransform(scrollYProgress, [0.0, 0.15], [0, 1]);
+  const line1EnterY = useTransform(scrollYProgress, [0.0, 0.15], [50, 0]);
+  const line1EnterScale = useTransform(scrollYProgress, [0.0, 0.15], [0.8, 1]);
+  const line1EnterBlur = useTransform(scrollYProgress, [0.0, 0.15], [20, 0]);
 
-  const line2EnterOpacity = useTransform(scrollYProgress, [0.20, 0.35], [0, 1]);
-  const line2EnterY = useTransform(scrollYProgress, [0.20, 0.35], [50, 0]);
-  const line2EnterScale = useTransform(scrollYProgress, [0.20, 0.35], [0.8, 1]);
-  const line2EnterBlur = useTransform(scrollYProgress, [0.20, 0.35], [20, 0]);
+  const line2EnterOpacity = useTransform(scrollYProgress, [0.10, 0.25], [0, 1]);
+  const line2EnterY = useTransform(scrollYProgress, [0.10, 0.25], [50, 0]);
+  const line2EnterScale = useTransform(scrollYProgress, [0.10, 0.25], [0.8, 1]);
+  const line2EnterBlur = useTransform(scrollYProgress, [0.10, 0.25], [20, 0]);
 
-  const line3EnterOpacity = useTransform(scrollYProgress, [0.30, 0.45], [0, 1]);
-  const line3EnterY = useTransform(scrollYProgress, [0.30, 0.45], [50, 0]);
-  const line3EnterScale = useTransform(scrollYProgress, [0.30, 0.45], [0.8, 1]);
-  const line3EnterBlur = useTransform(scrollYProgress, [0.30, 0.45], [20, 0]);
+  const line3EnterOpacity = useTransform(scrollYProgress, [0.20, 0.35], [0, 1]);
+  const line3EnterY = useTransform(scrollYProgress, [0.20, 0.35], [50, 0]);
+  const line3EnterScale = useTransform(scrollYProgress, [0.20, 0.35], [0.8, 1]);
+  const line3EnterBlur = useTransform(scrollYProgress, [0.20, 0.35], [20, 0]);
 
-  const pEnterOpacity = useTransform(scrollYProgress, [0.45, 0.60], [0, 1]);
-  const pEnterY = useTransform(scrollYProgress, [0.45, 0.60], [50, 0]);
+  const pEnterOpacity = useTransform(scrollYProgress, [0.35, 0.50], [0, 1]);
+  const pEnterY = useTransform(scrollYProgress, [0.35, 0.50], [50, 0]);
 
   // Exit
   const line1ExitOpacity = useTransform(scrollYProgress, [0.70, 0.80], [1, 0]);

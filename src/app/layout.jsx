@@ -4,6 +4,7 @@ import SharedNavbar from "@/components/SharedNavbar";
 import LenisProvider from "@/components/LenisProvider";
 import { ThemeProvider } from "@/context/ThemeContext";
 import FpsMeter from "@/components/FpsMeter";
+import AudioPlayer from "@/components/AudioPlayer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({ children }) {
             <SharedNavbar />
             <div className="relative z-10">{children}</div>
             <FpsMeter />
+            <AudioPlayer />
           </LenisProvider>
         </ThemeProvider>
       </body>

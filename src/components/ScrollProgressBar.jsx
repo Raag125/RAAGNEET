@@ -18,34 +18,40 @@ const sectionIds = Object.keys(sectionLabels);
 export default function ScrollProgressBar() {
   const [active, setActive] = useState("hero");
   const [hovered, setHovered] = useState(null);
-  const observerRef = useRef(null);
-
   useEffect(() => {
-    const els = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
-    if (els.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the section with the highest intersection ratio
-        let best = null;
-        let bestRatio = 0;
-        for (const entry of entries) {
-          if (entry.intersectionRatio > bestRatio) {
-            bestRatio = entry.intersectionRatio;
-            best = entry.target.id;
+    const handleScroll = () => {
+      // Use a trigger point slightly above the center of the screen
+      const triggerY = window.innerHeight * 0.4;
+      
+      let currentActive = null;
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // If the trigger point falls inside the section's rect
+          if (rect.top <= triggerY && rect.bottom >= triggerY) {
+            currentActive = id;
+            // Break early since we found the active one
+            break;
           }
         }
-        if (best) setActive(best);
-      },
-      { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] }
-    );
+      }
 
-    observerRef.current = observer;
-    els.forEach(el => observer.observe(el));
+      // Fallback: if we are at the absolute bottom of the page, activate the last section
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+        currentActive = sectionIds[sectionIds.length - 1];
+      }
 
-    return () => {
-      els.forEach(el => observer.unobserve(el));
+      if (currentActive) {
+        setActive((prev) => (prev !== currentActive ? currentActive : prev));
+      }
     };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Run once on mount to set initial state
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const idx = sectionIds.indexOf(active);

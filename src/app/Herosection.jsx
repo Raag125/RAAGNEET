@@ -14,6 +14,18 @@ import ParticleField from '@/components/animations/ParticleField';
 import ThemeBackground from '@/components/ThemeBackground';
 import { useTheme } from '@/context/ThemeContext';
 
+// --- SILENCE THREE.JS CLOCK WARNING ------------------------------------------
+if (typeof console !== 'undefined') {
+  const originalWarn = console.warn;
+  console.warn = (...args) => {
+    if (args[0] && typeof args[0] === 'string' && args[0].includes('THREE.Clock: This module has been deprecated')) {
+      return;
+    }
+    originalWarn(...args);
+  };
+}
+// ----------------------------------------------------------------------------
+
 // --- STYLE INJECTION --------------------------------------------------------
 function useInjectHeroStyles() {
   useInsertionEffect(() => {
@@ -47,13 +59,74 @@ function useInjectHeroStyles() {
         background-size: 200% auto;
         animation: gradient-shift 8s linear infinite;
       }
+      /* === CRYO: Frozen Ice Text === */
       .theme-cryo-char {
         display: inline-block;
-        background: linear-gradient(180deg, #ffffff 0%, #bfefff 40%, #7dd3fc 70%, #e0f7ff 100%);
+        position: relative;
+        padding: 0 0.15em;
+        margin: 0 -0.15em;
+        font-family: var(--font-syne);
+        font-style: normal;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+        /* Deep ice gradient: bright surface cracks -> deep blue ice -> milky frost tip */
+        background: linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #e0f7ff 20%,
+          #a6e3ff 45%,
+          #40bcf0 55%,
+          #0b80be 80%,
+          #a1e2ff 100%
+        );
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 0 8px rgba(147,210,255,0.9)) drop-shadow(0 0 20px rgba(100,200,255,0.6));
+        /* Premium 3D ice extrusion + heavy ambient dark shadow */
+        filter: drop-shadow(0px -2px 1px rgba(255,255,255,0.9))
+                drop-shadow(0px 2px 1px rgba(0,80,140,0.8))
+                drop-shadow(0px 10px 20px rgba(0,0,0,0.95))
+                drop-shadow(0px 0px 40px rgba(0,20,50,0.9));
+        background-size: 100% 100%;
+        animation: ice-refract 6s ease-in-out infinite;
+      }
+      @keyframes ice-refract {
+        0%   { background-position: 0% 50%;  }
+        40%  { background-position: 60% 30%; }
+        70%  { background-position: 30% 80%; }
+        100% { background-position: 0% 50%;  }
+      }
+      /* Shimmer streak across the frozen surface */
+      .theme-cryo-char::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          105deg,
+          transparent 30%,
+          rgba(255,255,255,0.6) 45%,
+          rgba(220,245,255,0.4) 50%,
+          rgba(255,255,255,0.3) 55%,
+          transparent 70%
+        );
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: ice-shimmer 4s ease-in-out infinite;
+      }
+      @keyframes ice-shimmer {
+        0%   { background-position: -100% 0; }
+        60%  { background-position: 250% 0;  }
+        100% { background-position: 250% 0;  }
+      }
+      @keyframes shimmer {
+        0% { transform: translateX(-150%) skewX(-15deg); }
+        100% { transform: translateX(150%) skewX(-15deg); }
+      }
+      .animate-shimmer {
+        animation: shimmer 2s infinite linear;
       }
       .theme-monsoon-char {
         display: inline-block;
@@ -239,21 +312,13 @@ function ThemeTextWrapper({ children, theme }) {
     return (
       <span className="relative inline-block">
         {chars.map((ch, i) => (
-          <motion.span
+          <span
             key={i}
             className="theme-cryo-char"
-            animate={{
-              y: [0, i % 2 === 0 ? -1 : 0.5, 0],
-              filter: [
-                'drop-shadow(0 0 6px rgba(147,210,255,0.7)) drop-shadow(0 0 18px rgba(100,200,255,0.5))',
-                'drop-shadow(0 0 14px rgba(147,210,255,1)) drop-shadow(0 0 30px rgba(100,200,255,0.8))',
-                'drop-shadow(0 0 6px rgba(147,210,255,0.7)) drop-shadow(0 0 18px rgba(100,200,255,0.5))',
-              ],
-            }}
-            transition={{ duration: 3 + i * 0.15, repeat: Infinity, ease: 'easeInOut', delay: i * 0.08 }}
+            style={{ animationDelay: `${i * 0.18}s` }}
           >
             {ch === ' ' ? '\u00A0' : ch}
-          </motion.span>
+          </span>
         ))}
       </span>
     );
@@ -278,51 +343,61 @@ function HeroOverlay({ scrollProgress }) {
 
   // ----------------------------------------------------
   // CINEMATIC TIMELINE (Total height: 500vh)
-  // 0.00 -> 0.15: Hold Scene 1 (Text stays pinned on screen)
-  // 0.15 -> 0.45: Scene 1 Disappears line-by-line
-  // 0.45 -> 0.55: The Void (Screen remains empty)
+  // 0.00 -> 0.10: Hold Scene 1 (Text stays pinned on screen)
+  // 0.10 -> 0.50: Scene 1 Disappears line-by-line
+  // 0.50 -> 0.55: The Void (Screen remains empty)
   // 0.55 -> 0.85: Scene 2 Drops in piece-by-piece
   // 0.85 -> 1.00: Hold Scene 2 (Fully visible before unpinning)
   // ----------------------------------------------------
 
   // Scene 1 Sequential Line-by-Line Exit
-  const scene1Visibility = useTransform(scrollProgress, p => p > 0.45 ? 'hidden' : 'visible');
+  const scene1Visibility = useTransform(scrollProgress, p => p > 0.50 ? 'hidden' : 'visible');
   
-  // Line 1: Transform Your Business (Fades with Line 2)
-  const s1L1Opacity = useTransform(scrollProgress, [0.15, 0.25], [1, 0]);
-  const s1L1Y = useTransform(scrollProgress, [0.15, 0.25], [0, -30]);
+  // Line 1: Transform Your Business
+  const s1L1Opacity = useTransform(scrollProgress, [0.10, 0.18], [1, 0]);
+  const s1L1Y = useTransform(scrollProgress, [0.10, 0.18], [0, -30]);
+  const s1L1Visibility = useTransform(scrollProgress, p => p > 0.185 ? 'hidden' : 'visible');
 
   // Line 2: THE FUTURE OF YOUR
-  const s1L2Opacity = useTransform(scrollProgress, [0.15, 0.25], [1, 0]);
-  const s1L2Y = useTransform(scrollProgress, [0.15, 0.25], [0, -30]);
+  const s1L2Opacity = useTransform(scrollProgress, [0.18, 0.26], [1, 0]);
+  const s1L2Y = useTransform(scrollProgress, [0.18, 0.26], [0, -30]);
+  const s1L2Visibility = useTransform(scrollProgress, p => p > 0.265 ? 'hidden' : 'visible');
 
   // Line 3: DIGITAL
-  const s1L3Opacity = useTransform(scrollProgress, [0.25, 0.35], [1, 0]);
-  const s1L3Y = useTransform(scrollProgress, [0.25, 0.35], [0, -30]);
+  const s1L3Opacity = useTransform(scrollProgress, [0.26, 0.34], [1, 0]);
+  const s1L3Y = useTransform(scrollProgress, [0.26, 0.34], [0, -30]);
+  const s1L3Visibility = useTransform(scrollProgress, p => p > 0.345 ? 'hidden' : 'visible');
 
   // Line 4: PRESENCE
-  const s1L4Opacity = useTransform(scrollProgress, [0.30, 0.40], [1, 0]);
-  const s1L4Y = useTransform(scrollProgress, [0.30, 0.40], [0, -30]);
+  const s1L4Opacity = useTransform(scrollProgress, [0.34, 0.42], [1, 0]);
+  const s1L4Y = useTransform(scrollProgress, [0.34, 0.42], [0, -30]);
+  const s1L4Visibility = useTransform(scrollProgress, p => p > 0.425 ? 'hidden' : 'visible');
 
   // Line 5: Paragraph & Scroll Indicator
-  const s1L5Opacity = useTransform(scrollProgress, [0.35, 0.45], [1, 0]);
-  const s1L5Y = useTransform(scrollProgress, [0.35, 0.45], [0, -30]);
+  const s1L5Opacity = useTransform(scrollProgress, [0.42, 0.50], [1, 0]);
+  const s1L5Y = useTransform(scrollProgress, [0.42, 0.50], [0, -30]);
+  const s1L5Visibility = useTransform(scrollProgress, p => p > 0.505 ? 'hidden' : 'visible');
 
   // Scene 2 Base Wrapper
-  const scene2Visibility = useTransform(scrollProgress, p => p < 0.45 ? 'hidden' : 'visible');
-  const scene2Opacity = useTransform(scrollProgress, [0.45, 0.60], [0, 1]);
+  const scene2Visibility = useTransform(scrollProgress, p => p < 0.50 || p > 0.95 ? 'hidden' : 'visible');
   
-  // Scene 2 Drop Entrance
-  const scene2Text1Opacity = useTransform(scrollProgress, [0.45, 0.55], [0, 1]);
-  const scene2Text1Y = useTransform(scrollProgress, [0.45, 0.55], [-80, 0]);
-  const scene2Text1Scale = useTransform(scrollProgress, [0.45, 0.55], [1.5, 1]);
+  // Scene 2 Drop Entrance & Exit
+  // "READY TO"
+  const scene2Text1Opacity = useTransform(scrollProgress, [0.50, 0.58, 0.80, 0.88], [0, 1, 1, 0]);
+  const scene2Text1Y = useTransform(scrollProgress, [0.50, 0.58, 0.80, 0.88], [-80, 0, 0, -120]);
+  const scene2Text1Scale = useTransform(scrollProgress, [0.50, 0.58, 0.80, 0.88], [1.5, 1, 1, 0.5]);
+  const scene2Text1Filter = useTransform(scrollProgress, [0.50, 0.58, 0.80, 0.88], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(20px)"]);
 
-  const scene2Text2Opacity = useTransform(scrollProgress, [0.55, 0.65], [0, 1]);
-  const scene2Text2Y = useTransform(scrollProgress, [0.55, 0.65], [-80, 0]);
-  const scene2Text2Scale = useTransform(scrollProgress, [0.55, 0.65], [1.5, 1]);
+  // "EVOLVE?"
+  const scene2Text2Opacity = useTransform(scrollProgress, [0.58, 0.66, 0.82, 0.90], [0, 1, 1, 0]);
+  const scene2Text2Y = useTransform(scrollProgress, [0.58, 0.66, 0.82, 0.90], [-80, 0, 0, -120]);
+  const scene2Text2Scale = useTransform(scrollProgress, [0.58, 0.66, 0.82, 0.90], [1.5, 1, 1, 0.5]);
+  const scene2Text2Filter = useTransform(scrollProgress, [0.58, 0.66, 0.82, 0.90], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(20px)"]);
 
-  const scene2BtnOpacity = useTransform(scrollProgress, [0.65, 0.75], [0, 1]);
-  const scene2BtnY = useTransform(scrollProgress, [0.65, 0.75], [60, 0]);
+  // Button
+  const scene2BtnOpacity = useTransform(scrollProgress, [0.66, 0.74, 0.84, 0.92], [0, 1, 1, 0]);
+  const scene2BtnY = useTransform(scrollProgress, [0.66, 0.74, 0.84, 0.92], [60, 0, 0, 120]);
+  const scene2BtnScale = useTransform(scrollProgress, [0.66, 0.74, 0.84, 0.92], [0.95, 1, 1, 0.8]);
 
   return (
     <div className="relative w-full h-screen flex flex-col z-20">
@@ -337,7 +412,7 @@ function HeroOverlay({ scrollProgress }) {
           */
           className="w-full flex flex-col items-start text-left pointer-events-none"
         >
-          <motion.div style={{ opacity: s1L1Opacity, y: s1L1Y }}>
+          <motion.div style={{ opacity: s1L1Opacity, y: s1L1Y, visibility: s1L1Visibility }}>
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -368,29 +443,25 @@ function HeroOverlay({ scrollProgress }) {
               className="flex flex-col gap-2 font-bricolage tracking-tighter cursor-default"
             >
               <motion.div
-                className="overflow-hidden pr-12 -mr-12 py-2 -my-2"
-                /* 
-                  👇 ADJUST THE VALUE BELOW TO SHIFT "THE FUTURE OF YOUR" RIGHT/LEFT 👇 
-
-                     Change "0px" to "50px" to shift right, or "-50px" to shift left!
-                */
-                style={{ opacity: s1L2Opacity, y: s1L2Y, marginLeft: "0px" }}
+                /* 👇 ADJUST THE VALUE BELOW TO SHIFT "THE FUTURE OF YOUR" RIGHT/LEFT 👇 */
+                style={{ opacity: s1L2Opacity, y: s1L2Y, marginLeft: "0px", visibility: s1L2Visibility }}
+                className="py-1 overflow-visible"
               >
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 } }}
                   whileHover={!theme || theme === 'default' ? { color: "rgba(0, 255, 224, 0)", WebkitTextStroke: "2px rgba(0, 255, 224, 0.9)", textShadow: "0 0 30px rgba(0, 255, 224, 0.4)", transition: { duration: 0.5, ease: "easeInOut" } } : {}}
                   style={(!theme || theme === 'default') ? { color: "#ffffff" } : {}}
-                  className="block text-[clamp(2.5rem,7vw,6.5rem)] leading-[0.95] font-black italic pr-4"
+                  className="block text-[clamp(2.5rem,7vw,6.5rem)] leading-[1.05] font-black italic pr-6"
                 >
                   <ThemeTextWrapper theme={theme}>THE FUTURE OF YOUR</ThemeTextWrapper>
                 </motion.span>
               </motion.div>
-              <motion.div style={{ opacity: s1L3Opacity, y: s1L3Y }} className="overflow-hidden flex items-baseline gap-4 pr-12 -mr-12 py-2 -my-2">
+              <motion.div style={{ opacity: s1L3Opacity, y: s1L3Y, visibility: s1L3Visibility }} className="flex items-center gap-4 py-1 overflow-visible">
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.55 } }}
-                  className="block text-[clamp(3.5rem,10vw,8.5rem)] leading-[0.95] font-black italic pr-4"
+                  className="block text-[clamp(3.5rem,10vw,8.5rem)] leading-[1.05] font-black italic pr-8"
                 >
                   {(!theme || theme === 'default') && (
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient">DIGITAL</span>
@@ -405,10 +476,7 @@ function HeroOverlay({ scrollProgress }) {
                   {theme === 'cryo' && (
                     <span className="relative inline-block">
                       {'DIGITAL'.split('').map((ch, i) => (
-                        <motion.span key={i} className="theme-cryo-char"
-                          animate={{ y: [0, i%2===0?-1:0.5, 0], filter: ['drop-shadow(0 0 6px rgba(147,210,255,0.7))','drop-shadow(0 0 18px rgba(147,210,255,1))','drop-shadow(0 0 6px rgba(147,210,255,0.7))'] }}
-                          transition={{ duration: 3+i*0.15, repeat: Infinity, ease:'easeInOut', delay: i*0.08 }}
-                        >{ch}</motion.span>
+                        <span key={i} className="theme-cryo-char" style={{ animationDelay: `${i * 0.18}s` }}>{ch}</span>
                       ))}
                     </span>
                   )}
@@ -417,16 +485,16 @@ function HeroOverlay({ scrollProgress }) {
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1, transition: { type: "spring", stiffness: 200, delay: 1.2 } }}
                   whileHover={{ scale: 1.5, backgroundColor: "#fff", transition: { duration: 0.4 } }}
-                  className="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_20px_rgba(0,255,224,0.8)] hidden sm:block"
+                  className="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_20px_rgba(0,255,224,0.8)] hidden sm:block flex-shrink-0"
                 />
               </motion.div>
-              <motion.div style={{ opacity: s1L4Opacity, y: s1L4Y }} className="overflow-hidden pr-12 -mr-12 py-2 -my-2">
+              <motion.div style={{ opacity: s1L4Opacity, y: s1L4Y, visibility: s1L4Visibility }} className="py-1 overflow-visible">
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.7 } }}
                   whileHover={!theme || theme === 'default' ? { color: "rgba(59, 130, 246, 0)", WebkitTextStroke: "2px rgba(59, 130, 246, 0.9)", textShadow: "0 0 30px rgba(59, 130, 246, 0.4)", transition: { duration: 0.5, ease: "easeInOut" } } : {}}
                   style={(!theme || theme === 'default') ? { color: "#ffffff" } : {}}
-                  className="block text-[clamp(3.5rem,10vw,8.5rem)] leading-[0.95] font-black italic pr-4"
+                  className="block text-[clamp(3.5rem,10vw,8.5rem)] leading-[1.05] font-black italic pr-8"
                 >
                   <ThemeTextWrapper theme={theme}>PRESENCE</ThemeTextWrapper>
                 </motion.span>
@@ -434,7 +502,7 @@ function HeroOverlay({ scrollProgress }) {
             </motion.h1>
           </motion.div>
 
-          <motion.div style={{ opacity: s1L5Opacity, y: s1L5Y }}>
+          <motion.div style={{ opacity: s1L5Opacity, y: s1L5Y, visibility: s1L5Visibility }}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -457,7 +525,6 @@ function HeroOverlay({ scrollProgress }) {
         {/* SCENE 2: Call to Action */}
         <motion.div
           style={{
-            opacity: scene2Opacity,
             visibility: scene2Visibility
           }}
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
@@ -473,58 +540,60 @@ function HeroOverlay({ scrollProgress }) {
           />
 
           <h2 className="font-bricolage font-black text-white text-4xl sm:text-6xl md:text-8xl mb-12 tracking-tighter leading-tight italic flex flex-col items-center">
-            <motion.span style={{ opacity: scene2Text1Opacity, y: scene2Text1Y, scale: scene2Text1Scale }}>
+            <motion.span style={{ opacity: scene2Text1Opacity, y: scene2Text1Y, scale: scene2Text1Scale, filter: scene2Text1Filter }}>
               READY TO
             </motion.span>
-            <motion.span style={{ opacity: scene2Text2Opacity, y: scene2Text2Y, scale: scene2Text2Scale }} className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40 pr-4 inline-block mt-2">
+            <motion.span style={{ opacity: scene2Text2Opacity, y: scene2Text2Y, scale: scene2Text2Scale, filter: scene2Text2Filter }} className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40 pr-4 inline-block mt-2">
               EVOLVE?
             </motion.span>
           </h2>
 
-          <motion.button
-            style={{ opacity: scene2BtnOpacity, y: scene2BtnY }}
-            onClick={handleCtaClick}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group relative px-8 py-5 sm:px-12 sm:py-6 rounded-full bg-white overflow-hidden transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_80px_rgba(0,255,224,0.5)]"
-          >
-            {/* Cyan Gradient Hover Fill */}
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 bg-[length:200%_auto] animate-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <motion.div style={{ opacity: scene2BtnOpacity, y: scene2BtnY, scale: scene2BtnScale }}>
+            <motion.button
+              onClick={handleCtaClick}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="group relative px-8 py-5 sm:px-14 sm:py-7 rounded-full bg-[#0a0a0a]/80 backdrop-blur-xl overflow-hidden transition-all duration-500 border border-white/10 hover:border-cyan-400/50 shadow-[0_0_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_60px_rgba(0,255,224,0.25)]"
+            >
+              {/* Ambient Inner Glow */}
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/10 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              
+              {/* Shimmer Sweep Effect */}
+              <div className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 animate-shimmer transition-opacity duration-300" />
 
-            <span className="relative z-10 flex items-center gap-4 text-black group-hover:text-white font-syne font-bold tracking-[0.1em] text-sm sm:text-lg uppercase transition-colors duration-500">
-              {isHovered ? "yeah man click waiting for what" : "Claim Your Free Custom Demo"}
-              <div className="w-8 h-8 rounded-full bg-black group-hover:bg-white text-white group-hover:text-blue-600 flex items-center justify-center transition-colors duration-500 shadow-lg">
-                <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </div>
-            </span>
+              <span className="relative z-10 flex items-center gap-4 text-white font-syne font-bold tracking-[0.15em] text-sm sm:text-lg uppercase transition-colors duration-500">
+                Claim Your Free Custom Demo
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 group-hover:bg-cyan-400 text-white group-hover:text-black flex items-center justify-center transition-all duration-500 shadow-lg group-hover:shadow-[0_0_20px_rgba(0,255,224,0.6)] group-hover:scale-110">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
+              </span>
 
-            <AnimatePresence>
-              {ripples.map((r) => (
-                <motion.span
-                  key={r.id}
-                  initial={{ scale: 0, opacity: 0.8 }}
-                  animate={{ scale: 8, opacity: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.8 }}
-                  style={{
-                    position: 'absolute', left: r.x, top: r.y,
-                    width: 20, height: 20, borderRadius: '50%',
-                    background: 'rgba(255, 255, 255, 0.4)', pointerEvents: 'none'
-                  }}
-                />
-              ))}
-            </AnimatePresence>
-          </motion.button>
+              <AnimatePresence>
+                {ripples.map((r) => (
+                  <motion.span
+                    key={r.id}
+                    initial={{ scale: 0, opacity: 0.8 }}
+                    animate={{ scale: 8, opacity: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    style={{
+                      position: 'absolute', left: r.x, top: r.y,
+                      width: 20, height: 20, borderRadius: '50%',
+                      background: 'rgba(0, 255, 224, 0.4)', pointerEvents: 'none'
+                    }}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.button>
+          </motion.div>
         </motion.div>
       </div>
 
       {/* Scroll Indicator */}
       <motion.div
-        style={{ opacity: s1L5Opacity }}
+        style={{ opacity: s1L5Opacity, visibility: s1L5Visibility }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 pointer-events-none"
       >
         <motion.div

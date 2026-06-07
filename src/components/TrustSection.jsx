@@ -57,14 +57,14 @@ export default function TrustSection() {
     offset: ["start start", "end end"],
   });
 
-  const text1Opacity = useTransform(scrollYProgress, [0, 0.15, 0.25], [0, 1, 0]);
-  const text1Y = useTransform(scrollYProgress, [0, 0.15, 0.25], [50, 0, -50]);
+  const text1Opacity = useTransform(scrollYProgress, [0, 0.05, 0.25, 0.3], [0, 1, 1, 0]);
+  const text1Y = useTransform(scrollYProgress, [0, 0.05, 0.25, 0.3], [50, 0, 0, -50]);
 
-  const text2Opacity = useTransform(scrollYProgress, [0.35, 0.5, 0.6], [0, 1, 0]);
-  const text2Y = useTransform(scrollYProgress, [0.35, 0.5, 0.6], [50, 0, -50]);
+  const text2Opacity = useTransform(scrollYProgress, [0.3, 0.35, 0.60, 0.65], [0, 1, 1, 0]);
+  const text2Y = useTransform(scrollYProgress, [0.3, 0.35, 0.60, 0.65], [50, 0, 0, -50]);
 
-  const text3Opacity = useTransform(scrollYProgress, [0.7, 0.85, 1], [0, 1, 1]);
-  const text3Y = useTransform(scrollYProgress, [0.7, 0.85, 1], [50, 0, 0]);
+  const text3Opacity = useTransform(scrollYProgress, [0.65, 0.70], [0, 1]);
+  const text3Y = useTransform(scrollYProgress, [0.65, 0.70], [50, 0]);
 
   return (
     <>
@@ -72,7 +72,7 @@ export default function TrustSection() {
 
       <motion.section 
         ref={containerRef}
-        className="relative w-full h-[200vh] bg-transparent hidden md:block"
+        className="relative w-full h-[400vh] bg-transparent hidden md:block"
       >
         <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-6">
           

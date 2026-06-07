@@ -89,34 +89,52 @@ export default function WhatWeBuild() {
   });
 
   // Entrance Transforms
-  const titleY = useTransform(scrollYProgress, [0, 0.15], [100, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
+  const titleY = useTransform(scrollYProgress, [0, 0.10], [100, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.10], [0, 1]);
 
-  const cards12Y = useTransform(scrollYProgress, [0.15, 0.30], [100, 0]);
-  const cards12Opacity = useTransform(scrollYProgress, [0.15, 0.30], [0, 1]);
+  const card1Y = useTransform(scrollYProgress, [0.10, 0.20], [100, 0]);
+  const card1Opacity = useTransform(scrollYProgress, [0.10, 0.20], [0, 1]);
 
-  const cards34Y = useTransform(scrollYProgress, [0.30, 0.45], [100, 0]);
-  const cards34Opacity = useTransform(scrollYProgress, [0.30, 0.45], [0, 1]);
+  const card2Y = useTransform(scrollYProgress, [0.20, 0.30], [100, 0]);
+  const card2Opacity = useTransform(scrollYProgress, [0.20, 0.30], [0, 1]);
+
+  const card3Y = useTransform(scrollYProgress, [0.30, 0.40], [100, 0]);
+  const card3Opacity = useTransform(scrollYProgress, [0.30, 0.40], [0, 1]);
+
+  const card4Y = useTransform(scrollYProgress, [0.40, 0.50], [100, 0]);
+  const card4Opacity = useTransform(scrollYProgress, [0.40, 0.50], [0, 1]);
 
   // Exit Transforms
-  const titleExitY = useTransform(scrollYProgress, [0.70, 0.80], [0, -50]);
-  const titleExitOpacity = useTransform(scrollYProgress, [0.70, 0.80], [1, 0]);
+  const titleExitY = useTransform(scrollYProgress, [0.55, 0.65], [0, -50]);
+  const titleExitOpacity = useTransform(scrollYProgress, [0.55, 0.65], [1, 0]);
 
-  const cards12ExitY = useTransform(scrollYProgress, [0.80, 0.90], [0, -50]);
-  const cards12ExitOpacity = useTransform(scrollYProgress, [0.80, 0.90], [1, 0]);
+  const card1ExitY = useTransform(scrollYProgress, [0.60, 0.70], [0, -50]);
+  const card1ExitOpacity = useTransform(scrollYProgress, [0.60, 0.70], [1, 0]);
 
-  const cards34ExitY = useTransform(scrollYProgress, [0.90, 1.00], [0, -50]);
-  const cards34ExitOpacity = useTransform(scrollYProgress, [0.90, 1.00], [1, 0]);
+  const card2ExitY = useTransform(scrollYProgress, [0.65, 0.75], [0, -50]);
+  const card2ExitOpacity = useTransform(scrollYProgress, [0.65, 0.75], [1, 0]);
+
+  const card3ExitY = useTransform(scrollYProgress, [0.70, 0.80], [0, -50]);
+  const card3ExitOpacity = useTransform(scrollYProgress, [0.70, 0.80], [1, 0]);
+
+  const card4ExitY = useTransform(scrollYProgress, [0.75, 0.85], [0, -50]);
+  const card4ExitOpacity = useTransform(scrollYProgress, [0.75, 0.85], [1, 0]);
 
   // Combine Enter & Exit
-  const finalTitleY = useTransform(scrollYProgress, p => p < 0.5 ? titleY.get() : titleExitY.get());
-  const finalTitleOpacity = useTransform(scrollYProgress, p => p < 0.5 ? titleOpacity.get() : titleExitOpacity.get());
+  const finalTitleY = useTransform(scrollYProgress, p => p < 0.52 ? titleY.get() : titleExitY.get());
+  const finalTitleOpacity = useTransform(scrollYProgress, p => p < 0.52 ? titleOpacity.get() : titleExitOpacity.get());
 
-  const finalCards12Y = useTransform(scrollYProgress, p => p < 0.6 ? cards12Y.get() : cards12ExitY.get());
-  const finalCards12Opacity = useTransform(scrollYProgress, p => p < 0.6 ? cards12Opacity.get() : cards12ExitOpacity.get());
+  const finalCard1Y = useTransform(scrollYProgress, p => p < 0.55 ? card1Y.get() : card1ExitY.get());
+  const finalCard1Opacity = useTransform(scrollYProgress, p => p < 0.55 ? card1Opacity.get() : card1ExitOpacity.get());
 
-  const finalCards34Y = useTransform(scrollYProgress, p => p < 0.7 ? cards34Y.get() : cards34ExitY.get());
-  const finalCards34Opacity = useTransform(scrollYProgress, p => p < 0.7 ? cards34Opacity.get() : cards34ExitOpacity.get());
+  const finalCard2Y = useTransform(scrollYProgress, p => p < 0.60 ? card2Y.get() : card2ExitY.get());
+  const finalCard2Opacity = useTransform(scrollYProgress, p => p < 0.60 ? card2Opacity.get() : card2ExitOpacity.get());
+
+  const finalCard3Y = useTransform(scrollYProgress, p => p < 0.65 ? card3Y.get() : card3ExitY.get());
+  const finalCard3Opacity = useTransform(scrollYProgress, p => p < 0.65 ? card3Opacity.get() : card3ExitOpacity.get());
+
+  const finalCard4Y = useTransform(scrollYProgress, p => p < 0.70 ? card4Y.get() : card4ExitY.get());
+  const finalCard4Opacity = useTransform(scrollYProgress, p => p < 0.70 ? card4Opacity.get() : card4ExitOpacity.get());
 
   const bgY = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
@@ -166,15 +184,23 @@ export default function WhatWeBuild() {
               {/* Cards Grid */}
               <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full items-stretch">
                 {/* Cards 1 & 2 */}
-                <motion.div style={{ y: finalCards12Y, opacity: finalCards12Opacity }} className="flex flex-col gap-4 h-full">
-                  <ServiceCard {...services[0]} />
-                  <ServiceCard {...services[1]} />
-                </motion.div>
+                <div className="flex flex-col gap-4 h-full">
+                  <motion.div style={{ y: finalCard1Y, opacity: finalCard1Opacity }} className="flex-1 flex flex-col">
+                    <ServiceCard {...services[0]} />
+                  </motion.div>
+                  <motion.div style={{ y: finalCard2Y, opacity: finalCard2Opacity }} className="flex-1 flex flex-col">
+                    <ServiceCard {...services[1]} />
+                  </motion.div>
+                </div>
                 {/* Cards 3 & 4 */}
-                <motion.div style={{ y: finalCards34Y, opacity: finalCards34Opacity }} className="flex flex-col gap-4 sm:mt-12 h-full">
-                  <ServiceCard {...services[2]} />
-                  <ServiceCard {...services[3]} />
-                </motion.div>
+                <div className="flex flex-col gap-4 sm:mt-12 h-full">
+                  <motion.div style={{ y: finalCard3Y, opacity: finalCard3Opacity }} className="flex-1 flex flex-col">
+                    <ServiceCard {...services[2]} />
+                  </motion.div>
+                  <motion.div style={{ y: finalCard4Y, opacity: finalCard4Opacity }} className="flex-1 flex flex-col">
+                    <ServiceCard {...services[3]} />
+                  </motion.div>
+                </div>
               </div>
 
             </div>
