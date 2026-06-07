@@ -38,51 +38,50 @@ export default function SharedNavbar() {
       initial={{ y: -30, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut', delay: 0.15 }}
-      className="fixed top-0 left-0 right-0 z-[100] pointer-events-auto px-3 sm:px-5"
+      className="fixed top-0 left-0 right-0 z-[100] pointer-events-none px-3 sm:px-5"
     >
-      <div className={`mx-auto max-w-6xl transition-all duration-500 ${scrolled ? 'mt-2' : 'mt-3'}`}>
-        <div className={`relative flex items-center justify-between transition-all duration-500 rounded-full border ${
+      {/* OUTSIDE LOGO - Absolute Top Left */}
+      <div className="absolute top-4 left-4 sm:top-5 sm:left-8 z-[110] pointer-events-auto">
+        <Link 
+          href="/" 
+          onClick={(e) => {
+            const now = Date.now();
+            if (now - secretClicks.lastTime > 2000) {
+              setSecretClicks({ count: 1, lastTime: now });
+            } else {
+              const newCount = secretClicks.count + 1;
+              setSecretClicks({ count: newCount, lastTime: now });
+              if (newCount >= 3) {
+                e.preventDefault();
+                router.push('/secret-mobile-preview');
+                setSecretClicks({ count: 0, lastTime: 0 });
+                return;
+              }
+            }
+
+            if (pathname === '/') {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
+          className="relative flex items-center group shrink-0"
+        >
+          <div className="relative h-10 sm:h-20 w-auto flex items-center justify-start overflow-visible">
+               <img 
+                 src="/logo-main.png" 
+                 alt="NeetWeb Logo" 
+                 className="h-full w-auto object-contain scale-[1.75] origin-left transition-transform duration-300 group-hover:scale-[1.85]" 
+               />
+          </div>
+        </Link>
+      </div>
+
+      <div className={`w-full sm:mx-auto sm:max-w-fit pointer-events-auto transition-all duration-500 flex justify-end pr-4 sm:justify-center sm:pr-0 ${scrolled ? 'mt-2 sm:mt-2' : 'mt-4 sm:mt-3'}`}>
+        <div className={`relative flex items-center justify-center gap-2 sm:gap-4 transition-all duration-500 rounded-full border ${
           scrolled
             ? 'bg-[#0a0a0a]/80 backdrop-blur-xl border-white/[0.07] shadow-[0_8px_32px_rgba(0,0,0,0.6)] py-1.5 px-4 sm:px-5'
             : 'bg-[#0a0a0a]/30 backdrop-blur-md border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.3)] py-2 px-4 sm:px-6'
         }`}>
-          {/* Logo */}
-          <Link 
-            href="/" 
-            onClick={(e) => {
-              const now = Date.now();
-              if (now - secretClicks.lastTime > 2000) {
-                // reset if took too long
-                setSecretClicks({ count: 1, lastTime: now });
-              } else {
-                const newCount = secretClicks.count + 1;
-                setSecretClicks({ count: newCount, lastTime: now });
-                if (newCount >= 3) {
-                  e.preventDefault();
-                  router.push('/secret-mobile-preview');
-                  setSecretClicks({ count: 0, lastTime: 0 });
-                  return;
-                }
-              }
-
-              if (pathname === '/') {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }
-            }}
-            className="relative flex items-center gap-2.5 group z-10 shrink-0"
-          >
-            <div className="relative w-7 h-7 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-md bg-gradient-to-br from-[#00FFE0]/20 to-transparent group-hover:from-[#00FFE0]/30 transition-all duration-500" />
-              <svg width="15" height="15" viewBox="0 0 18 18" fill="none" className="relative z-10">
-                <path d="M9 1L16.5 5.5V12.5L9 17L1.5 12.5V5.5L9 1Z" stroke="#00FFE0" strokeWidth="1.5" />
-                <circle cx="9" cy="9" r="2" fill="#00FFE0" />
-              </svg>
-            </div>
-            <span className="text-white/90 font-bold tracking-tight text-xs sm:text-sm">
-              RAAGNEET
-            </span>
-          </Link>
 
           {/* Center Navigation */}
           <div className="hidden md:flex items-center gap-0.5 z-10 mx-2">
@@ -92,7 +91,7 @@ export default function SharedNavbar() {
                 <Link
                   key={item.name}
                   href={item.path}
-                  className={`relative px-3 py-1.5 text-xs font-medium transition-colors duration-200 ${
+                  className={`relative px-4 py-2 text-sm font-medium tracking-wide transition-colors duration-200 ${
                     isActive ? 'text-white' : 'text-white/40 hover:text-white/70'
                   }`}
                 >
@@ -115,7 +114,7 @@ export default function SharedNavbar() {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/15 text-white/70 text-xs font-medium transition-all duration-200 hover:border-[#00FFE0]/40 hover:text-[#00FFE0] hover:shadow-[0_0_16px_rgba(0,255,224,0.08)]"
+                className="hidden sm:flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/15 text-white/70 text-sm font-medium tracking-wide transition-all duration-200 hover:border-[#00FFE0]/40 hover:text-[#00FFE0] hover:shadow-[0_0_16px_rgba(0,255,224,0.08)]"
               >
                 Tech Stack
               </motion.button>
@@ -124,9 +123,9 @@ export default function SharedNavbar() {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/15 text-white/70 text-xs font-medium transition-all duration-200 hover:border-[#00FFE0]/40 hover:text-[#00FFE0] hover:shadow-[0_0_16px_rgba(0,255,224,0.08)]"
+                className="hidden sm:flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/15 text-white/70 text-sm font-medium tracking-wide transition-all duration-200 hover:border-[#00FFE0]/40 hover:text-[#00FFE0] hover:shadow-[0_0_16px_rgba(0,255,224,0.08)]"
               >
-                <span className="w-1 h-1 rounded-full bg-[#00FFE0] shadow-[0_0_4px_#00FFE0]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00FFE0] shadow-[0_0_4px_#00FFE0]" />
                 Momo
               </motion.button>
             </Link>

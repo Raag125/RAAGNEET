@@ -3,9 +3,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, Disc3 } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
+
+const THEME_TRACKS = {
+  // Reliable MP3 tracks mapped to themes (OGG format fails in Safari)
+  default: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  cryo: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  aurora: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  monsoon: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+};
 
 export default function AudioPlayer() {
+  const { theme } = useTheme();
   const [isPlaying, setIsPlaying] = useState(false);
+  const userInteractedRef = useRef(false);
+  const userManuallyToggledRef = useRef(false);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -13,10 +25,22 @@ export default function AudioPlayer() {
     if (!audio) return;
     audio.volume = 0.4;
 
-    // Extremely aggressive autoplay strategy for 'start up' feel
-    // Browsers block pure autoplay, so we instantly trigger it on the very first pixel of mouse movement or scroll
+    let hasInteracted = false;
+    let allowAutoPlay = false;
+
+    // Delay theme music by exactly 6 seconds (4s loading video + 2s silence)
+    // This prevents the website music from mixing with the cinematic loader audio
+    const unlockTimer = setTimeout(() => {
+      allowAutoPlay = true;
+      if (hasInteracted && !userManuallyToggledRef.current && audio.paused) {
+        audio.play().then(() => setIsPlaying(true)).catch(() => {});
+      }
+    }, 6000);
+
     const tryAutoPlay = () => {
-      if (audio.paused) {
+      hasInteracted = true;
+      userInteractedRef.current = true;
+      if (allowAutoPlay && !userManuallyToggledRef.current && audio.paused) {
         audio.play().then(() => setIsPlaying(true)).catch(() => {});
       }
     };
@@ -25,21 +49,41 @@ export default function AudioPlayer() {
     const events = ["click", "scroll", "mousemove", "touchstart", "keydown"];
     const handleInitialInteraction = () => {
       tryAutoPlay();
-      // Remove listeners once initiated so we don't spam the play command
       events.forEach(e => document.removeEventListener(e, handleInitialInteraction));
     };
 
     events.forEach(e => document.addEventListener(e, handleInitialInteraction, { once: true }));
 
     return () => {
+      clearTimeout(unlockTimer);
       events.forEach(e => document.removeEventListener(e, handleInitialInteraction));
     };
   }, []);
 
-  const togglePlay = (e) => {
-    e.stopPropagation();
+  // Listen for Theme Changes and switch track seamlessly
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    const wasPlaying = !audio.paused;
+    
+    // Fade out slightly before switching (optional, but setting src immediately works fine)
+    audio.src = THEME_TRACKS[theme] || THEME_TRACKS.default;
+    audio.volume = theme === 'default' ? 0.3 : 0.4; // Slightly lower volume for piano
+
+    if (wasPlaying) {
+      audio.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+    }
+  }, [theme]);
+
+  const togglePlay = (e) => {
+    e.stopPropagation();
+    userInteractedRef.current = true; 
+    userManuallyToggledRef.current = true; // Mark that user explicitly pressed play/pause
+    
+    const audio = audioRef.current;
+    if (!audio) return;
+    
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
@@ -50,12 +94,12 @@ export default function AudioPlayer() {
 
   return (
     <>
-      {/* Reliable SoundHelix test audio file */}
+      {/* Theme-Dynamic Audio Track */}
       <audio
         ref={audioRef}
         loop
         preload="auto"
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+        src={THEME_TRACKS.default} 
       />
 
       <motion.div

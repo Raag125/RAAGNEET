@@ -71,13 +71,13 @@ function MobilePortfolio() {
         {projects.map((project, idx) => (
           <motion.div 
             key={project.id}
-            initial={{ opacity: 0, y: 80, scale: 0.9, rotateX: 15 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
-            exit={{ opacity: 0, y: -80, scale: 0.9, rotateX: -15 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full glass-card rounded-3xl overflow-hidden relative min-h-[450px] flex flex-col justify-end p-6 border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
-            style={{ background: project.image }}
+            initial={{ opacity: 0, y: 60, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -60, scale: 0.95 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full glass-card rounded-3xl overflow-hidden relative min-h-[450px] flex flex-col justify-end p-6 border border-white/10 shadow-xl"
+            style={{ background: project.image, willChange: "transform, opacity" }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#010103] via-[#010103]/80 to-transparent z-0" />
             
@@ -91,7 +91,7 @@ function MobilePortfolio() {
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="inline-block px-3 py-1 rounded-full bg-cyan-400/20 border border-cyan-400/30 text-cyan-400 font-bold text-[10px] uppercase tracking-wider mb-4 backdrop-blur-md"
+                className="inline-block px-3 py-1 rounded-full bg-cyan-900/60 border border-cyan-400/30 text-cyan-400 font-bold text-[10px] uppercase tracking-wider mb-4"
               >
                 Result: {project.stats}
               </motion.div>

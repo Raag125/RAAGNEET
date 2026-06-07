@@ -5,6 +5,7 @@ import LenisProvider from "@/components/LenisProvider";
 import { ThemeProvider } from "@/context/ThemeContext";
 import FpsMeter from "@/components/FpsMeter";
 import AudioPlayer from "@/components/AudioPlayer";
+import Loader from "@/components/Loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
       <body className="flex flex-col bg-[#010103] relative min-h-screen">
         <ThemeProvider>
           <LenisProvider>
+            <Loader />
             <SharedNavbar />
             <div className="relative z-10">{children}</div>
             <FpsMeter />

@@ -31,16 +31,17 @@ function CryoTheme() {
     canvas.height = window.innerHeight;
 
     // Track snow accumulation at the bottom
-    const resolution = 4; // Width of each "column" of snow
+    const resolution = 10; // Increased width for drastically fewer vertices to render
     let snowLevels = new Array(Math.ceil(canvas.width / resolution)).fill(0).map((_, i) => {
-        // Generate an organic, uneven starting snowbank
-        const baseHeight = 25;
-        const wave1 = Math.sin(i * 0.03) * 15;
-        const wave2 = Math.cos(i * 0.07) * 8;
-        return Math.max(10, baseHeight + wave1 + wave2);
+        // Subtle, low-profile snow drift
+        const baseHeight = 15;
+        const wave1 = Math.sin(i * 0.02) * 15;
+        const wave2 = Math.cos(i * 0.05) * 8;
+        const wave3 = Math.sin(i * 0.1) * 4;
+        return Math.max(5, baseHeight + wave1 + wave2 + wave3);
     });
 
-    const snowflakes = Array.from({ length: 300 }).map(() => ({
+    const snowflakes = Array.from({ length: 150 }).map(() => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       radius: Math.random() * 2.5 + 0.5,
@@ -48,6 +49,12 @@ function CryoTheme() {
       speedX: Math.random() * 1 - 0.5,
       opacity: Math.random() * 0.35 + 0.1, // Reduced opacity so it sits behind text
     }));
+
+    // Pre-calculate gradient to avoid re-instantiation in the render loop
+    let snowGrad = ctx.createLinearGradient(0, canvas.height - 150, 0, canvas.height);
+    snowGrad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+    snowGrad.addColorStop(0.3, "rgba(240, 248, 255, 0.98)");
+    snowGrad.addColorStop(1, "rgba(220, 240, 255, 1)");
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -62,18 +69,14 @@ function CryoTheme() {
         flake.y += flake.speedY;
         flake.x += flake.speedX + Math.sin(flake.y / 50) * 0.5;
 
-        // Wrap around X
         if (flake.x < 0) flake.x = canvas.width;
         if (flake.x > canvas.width) flake.x = 0;
 
-        // Check if flake reached the ground (or accumulated snow)
         const colIndex = Math.floor(flake.x / resolution);
         const accumulatedHeight = snowLevels[colIndex] || 0;
         
         if (flake.y >= canvas.height - accumulatedHeight) {
-          // Add to accumulation and reset flake
           if (colIndex >= 0 && colIndex < snowLevels.length) {
-            // Distribute snow slightly to neighbors to make it smooth
             snowLevels[colIndex] += flake.radius * 0.5;
             if (colIndex > 0) snowLevels[colIndex - 1] += flake.radius * 0.25;
             if (colIndex < snowLevels.length - 1) snowLevels[colIndex + 1] += flake.radius * 0.25;
@@ -83,28 +86,77 @@ function CryoTheme() {
         }
       });
 
-      // Draw accumulated snow at the bottom
+      // 1. Draw Deep Ice Shelf (sharp, translucent cyan)
       ctx.beginPath();
       ctx.moveTo(0, canvas.height);
       for (let i = 0; i < snowLevels.length; i++) {
-        ctx.lineTo(i * resolution, canvas.height - snowLevels[i]);
+        const x = i * resolution;
+        const y = canvas.height - (snowLevels[i] * 1.5) - Math.cos(i * 0.15) * 20;
+        ctx.lineTo(x, y);
       }
       ctx.lineTo(canvas.width, canvas.height);
-      ctx.lineTo(0, canvas.height);
-
-      // Create fluffy snow texture
-      const snowGrad = ctx.createLinearGradient(0, canvas.height - 150, 0, canvas.height);
-      snowGrad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
-      snowGrad.addColorStop(0.3, "rgba(240, 248, 255, 0.98)"); // slight icy blue tint
-      snowGrad.addColorStop(1, "rgba(220, 240, 255, 1)");
-
-      ctx.fillStyle = snowGrad;
-      ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
-      ctx.shadowBlur = 15;
+      ctx.fillStyle = "rgba(10, 120, 180, 0.15)"; 
       ctx.fill();
-      ctx.shadowBlur = 0; // reset for falling snow
 
-      // Smooth the snow over time (settling effect)
+      // 2. Draw Dense Blueish Snow Drift
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+      for (let i = 0; i < snowLevels.length; i++) {
+        const x = i * resolution;
+        const y = canvas.height - (snowLevels[i] * 1.15) - Math.sin(i * 0.08) * 12;
+        if (i === 0) ctx.lineTo(x, y);
+        else {
+          const prevX = (i - 1) * resolution;
+          const prevY = canvas.height - (snowLevels[i - 1] * 1.15) - Math.sin((i - 1) * 0.08) * 12;
+          ctx.quadraticCurveTo(prevX, prevY, (prevX + x) / 2, (prevY + y) / 2);
+        }
+      }
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(160, 220, 255, 0.6)"; 
+      ctx.fill();
+
+      // 3. Draw Foreground Bright White Fluffy Snow
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+      for (let i = 0; i < snowLevels.length; i++) {
+        const x = i * resolution;
+        const y = canvas.height - snowLevels[i];
+        
+        if (i === 0) ctx.lineTo(x, y);
+        else {
+          const prevX = (i - 1) * resolution;
+          const prevY = canvas.height - snowLevels[i - 1];
+          ctx.quadraticCurveTo(prevX, prevY, (prevX + x) / 2, (prevY + y) / 2);
+        }
+      }
+      ctx.lineTo(canvas.width, canvas.height - snowLevels[snowLevels.length - 1]);
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.lineTo(0, canvas.height);
+      ctx.fillStyle = snowGrad; 
+      ctx.fill();
+
+      // 4. Draw Icy Crust Glow (Rim Lighting on top of the snow)
+      ctx.beginPath();
+      for (let i = 0; i < snowLevels.length; i++) {
+        const x = i * resolution;
+        const y = canvas.height - snowLevels[i];
+        if (i === 0) ctx.moveTo(x, y);
+        else {
+          const prevX = (i - 1) * resolution;
+          const prevY = canvas.height - snowLevels[i - 1];
+          ctx.quadraticCurveTo(prevX, prevY, (prevX + x) / 2, (prevY + y) / 2);
+        }
+      }
+      // Inner cyan frost line
+      ctx.strokeStyle = "rgba(100, 240, 255, 0.4)";
+      ctx.lineWidth = 5;
+      ctx.stroke();
+      // Sharp white surface edge
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Smooth the snow settling
       for (let i = 0; i < snowLevels.length; i++) {
         if (snowLevels[i] > 0) {
            const left = i > 0 ? snowLevels[i - 1] : snowLevels[i];
@@ -124,6 +176,12 @@ function CryoTheme() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       snowLevels = new Array(Math.ceil(canvas.width / resolution)).fill(0);
+      
+      // Re-create gradient on resize
+      snowGrad = ctx.createLinearGradient(0, canvas.height - 150, 0, canvas.height);
+      snowGrad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+      snowGrad.addColorStop(0.3, "rgba(240, 248, 255, 0.98)");
+      snowGrad.addColorStop(1, "rgba(220, 240, 255, 1)");
     };
     window.addEventListener("resize", resize);
 
@@ -139,11 +197,11 @@ function CryoTheme() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1.5 }}
-      className="absolute inset-0 z-0 bg-black"
+      className="absolute inset-0 z-0 bg-[#02050A]"
     >
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-65" />
-      {/* Fractal ice patterns on edges */}
-      <div className="absolute inset-0 border-[20px] border-white/5 rounded-3xl blur-xl pointer-events-none mix-blend-overlay" />
+      {/* Fractal ice patterns on edges (Optimized: Replaced blur-xl with native inset shadow) */}
+      <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_120px_rgba(200,230,255,0.15)] rounded-3xl" />
     </motion.div>
   );
 }
@@ -160,7 +218,7 @@ function MonsoonTheme() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const rainDrops = Array.from({ length: 400 }).map(() => ({
+    const rainDrops = Array.from({ length: 150 }).map(() => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       length: Math.random() * 25 + 15,
@@ -222,19 +280,19 @@ function MonsoonTheme() {
         <motion.div 
           animate={{ x: ["-10%", "5%"] }}
           transition={{ duration: 30, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-          className="absolute -top-[50%] -left-[20%] w-[150%] h-[150%] bg-[radial-gradient(ellipse,_rgba(30,40,60,0.8)_0%,_transparent_60%)] blur-[60px]"
+          className="absolute -top-[50%] -left-[20%] w-[150%] h-[150%] bg-[radial-gradient(ellipse,_rgba(30,40,60,0.8)_0%,_transparent_60%)]"
         />
         {/* Layer 2: Midground dark clouds */}
         <motion.div 
           animate={{ x: ["5%", "-5%"] }}
           transition={{ duration: 22, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-          className="absolute -top-[30%] left-[10%] w-[120%] h-[120%] bg-[radial-gradient(ellipse,_rgba(15,20,35,0.95)_0%,_transparent_70%)] blur-[40px]"
+          className="absolute -top-[30%] left-[10%] w-[120%] h-[120%] bg-[radial-gradient(ellipse,_rgba(15,20,35,0.95)_0%,_transparent_70%)]"
         />
         {/* Layer 3: Foreground dense storm clouds */}
         <motion.div 
           animate={{ x: ["-2%", "3%"] }}
           transition={{ duration: 15, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-          className="absolute -top-[10%] -left-[10%] w-[130%] h-[100%] bg-[radial-gradient(ellipse,_rgba(5,10,20,1)_0%,_transparent_80%)] blur-[30px]"
+          className="absolute -top-[10%] -left-[10%] w-[130%] h-[100%] bg-[radial-gradient(ellipse,_rgba(5,10,20,1)_0%,_transparent_80%)]"
         />
       </div>
 
@@ -244,7 +302,7 @@ function MonsoonTheme() {
       <motion.div 
         animate={{ x: [-100, 100], opacity: [0.1, 0.3, 0.1] }}
         transition={{ duration: 12, repeat: Infinity, repeatType: "mirror" }}
-        className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent blur-md" 
+        className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent opacity-30" 
       />
 
       {/* Intense Lightning Flashes */}
@@ -275,7 +333,7 @@ function AuroraTheme() {
     canvas.height = window.innerHeight;
 
     // Generate flowing wind streams
-    const windStreams = Array.from({ length: 70 }).map(() => ({
+    const windStreams = Array.from({ length: 50 }).map(() => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       length: Math.random() * 600 + 300,
@@ -284,8 +342,8 @@ function AuroraTheme() {
       frequency: Math.random() * 0.003 + 0.001, // How stretched the wave is
       phase: Math.random() * Math.PI * 2,
       phaseSpeed: Math.random() * 0.04 + 0.01, // Speed of the ripple effect
-      opacity: Math.random() * 0.3 + 0.05,
-      thickness: Math.random() * 10 + 1, // Varying from thin threads to thick bands
+      opacity: Math.random() * 0.2 + 0.05,
+      thickness: Math.random() * 8 + 1, // Varying from thin threads to thick bands
     }));
 
     function draw() {
@@ -316,15 +374,8 @@ function AuroraTheme() {
           }
         }
         
-        // Gradient to make the stream fade out at the edges smoothly
-        const grad = ctx.createLinearGradient(stream.x, stream.y, stream.x + stream.length, stream.y);
-        grad.addColorStop(0, `rgba(232, 121, 249, 0)`); 
-        grad.addColorStop(0.3, `rgba(232, 121, 249, ${stream.opacity * 0.8})`);
-        grad.addColorStop(0.5, `rgba(232, 121, 249, ${stream.opacity})`);
-        grad.addColorStop(0.7, `rgba(232, 121, 249, ${stream.opacity * 0.8})`);
-        grad.addColorStop(1, `rgba(232, 121, 249, 0)`);
-        
-        ctx.strokeStyle = grad;
+        // Highly optimized stroke drawing (avoiding 120Hz gradient generation)
+        ctx.strokeStyle = `rgba(232, 121, 249, ${stream.opacity})`;
         ctx.lineWidth = stream.thickness;
         ctx.lineCap = "round";
         ctx.stroke();
@@ -375,8 +426,8 @@ function AuroraTheme() {
       {/* Fast moving atmospheric mist to complement the wind */}
       <motion.div 
         animate={{ x: [0, window.innerWidth] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-        className="absolute inset-0 w-[200%] h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-overlay blur-[2px]" 
+        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        className="absolute inset-0 w-[200%] h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10" 
       />
     </motion.div>
   );

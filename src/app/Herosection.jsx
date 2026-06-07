@@ -65,11 +65,6 @@ function useInjectHeroStyles() {
         position: relative;
         padding: 0 0.15em;
         margin: 0 -0.15em;
-        font-family: var(--font-syne);
-        font-style: normal;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: -0.02em;
         /* Deep ice gradient: bright surface cracks -> deep blue ice -> milky frost tip */
         background: linear-gradient(
           180deg,
@@ -79,47 +74,30 @@ function useInjectHeroStyles() {
           #40bcf0 55%,
           #0b80be 80%,
           #a1e2ff 100%
-        );
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        /* Premium 3D ice extrusion + heavy ambient dark shadow */
-        filter: drop-shadow(0px -2px 1px rgba(255,255,255,0.9))
-                drop-shadow(0px 2px 1px rgba(0,80,140,0.8))
-                drop-shadow(0px 10px 20px rgba(0,0,0,0.95))
-                drop-shadow(0px 0px 40px rgba(0,20,50,0.9));
-        background-size: 100% 100%;
-        animation: ice-refract 6s ease-in-out infinite;
+        ) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        z-index: 1;
       }
-      @keyframes ice-refract {
-        0%   { background-position: 0% 50%;  }
-        40%  { background-position: 60% 30%; }
-        70%  { background-position: 30% 80%; }
-        100% { background-position: 0% 50%;  }
-      }
-      /* Shimmer streak across the frozen surface */
-      .theme-cryo-char::after {
-        content: '';
+      
+      /* FLAWLESS WEBKIT-SAFE 3D EXTRUSION
+         Using a pseudo-element with native text-shadow completely eliminates
+         the shattered compositor bug caused by filter: drop-shadow. */
+      .theme-cryo-char::before {
+        content: attr(data-text);
         position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          105deg,
-          transparent 30%,
-          rgba(255,255,255,0.6) 45%,
-          rgba(220,245,255,0.4) 50%,
-          rgba(255,255,255,0.3) 55%,
-          transparent 70%
-        );
-        background-size: 200% 100%;
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: ice-shimmer 4s ease-in-out infinite;
-      }
-      @keyframes ice-shimmer {
-        0%   { background-position: -100% 0; }
-        60%  { background-position: 250% 0;  }
-        100% { background-position: 250% 0;  }
+        left: 0;
+        top: 0;
+        padding: 0 0.15em;
+        z-index: -1;
+        -webkit-text-fill-color: transparent !important;
+        text-shadow: 
+          0px -1px 0px rgba(255,255,255,0.8),
+          0px 2px 0px #0b80be,
+          0px 4px 1px rgba(0,80,140,0.8),
+          0px 10px 20px rgba(0,0,0,0.95);
+        pointer-events: none;
       }
       @keyframes shimmer {
         0% { transform: translateX(-150%) skewX(-15deg); }
@@ -308,18 +286,9 @@ function ThemeTextWrapper({ children, theme }) {
   }
 
   if (theme === 'cryo') {
-    const chars = text.split('');
     return (
-      <span className="relative inline-block">
-        {chars.map((ch, i) => (
-          <span
-            key={i}
-            className="theme-cryo-char"
-            style={{ animationDelay: `${i * 0.18}s` }}
-          >
-            {ch === ' ' ? '\u00A0' : ch}
-          </span>
-        ))}
+      <span className="theme-cryo-char" data-text={text}>
+        {children}
       </span>
     );
   }
@@ -417,12 +386,7 @@ function HeroOverlay({ scrollProgress }) {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="mt-6 mb-1 flex items-center gap-4"
-              /* 
-                👇 ADJUST THE VALUE BELOW TO LOWER JUST "Transform Your Business" 👇 
-                   Change "0px" to "20px", "40px", etc. (This won't push the title below it)
-              */
-              style={{ position: "relative", top: "55px" }}
+              className="mt-6 mb-1 flex items-center gap-4 relative top-0 sm:top-[55px]"
             >
               <div className="h-[1px] w-12 bg-cyan-400/50" />
               <span className="text-cyan-400 text-xs font-bold tracking-[0.5em] uppercase font-syne pr-2">
@@ -432,12 +396,7 @@ function HeroOverlay({ scrollProgress }) {
           </motion.div>
 
           <motion.div
-            className="relative pointer-events-auto perspective-[1000px]"
-            /* 
-              👇 ADJUST THE VALUE BELOW TO LOWER THE TITLE TEXT 👇 
-                 Change "0px" to "40px", "80px", etc., to push the title down!
-            */
-            style={{ marginTop: "70px" }}
+            className="relative pointer-events-auto perspective-[1000px] mt-4 sm:mt-[70px]"
           >
             <motion.h1
               className="flex flex-col gap-2 font-bricolage tracking-tighter cursor-default"
@@ -452,7 +411,7 @@ function HeroOverlay({ scrollProgress }) {
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 } }}
                   whileHover={!theme || theme === 'default' ? { color: "rgba(0, 255, 224, 0)", WebkitTextStroke: "2px rgba(0, 255, 224, 0.9)", textShadow: "0 0 30px rgba(0, 255, 224, 0.4)", transition: { duration: 0.5, ease: "easeInOut" } } : {}}
                   style={(!theme || theme === 'default') ? { color: "#ffffff" } : {}}
-                  className="block text-[clamp(2.5rem,7vw,6.5rem)] leading-[1.05] font-black italic pr-6"
+                  className="block text-[clamp(2rem,8vw,6.5rem)] leading-[1.05] font-black italic pr-6"
                 >
                   <ThemeTextWrapper theme={theme}>THE FUTURE OF YOUR</ThemeTextWrapper>
                 </motion.span>
@@ -461,7 +420,7 @@ function HeroOverlay({ scrollProgress }) {
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.55 } }}
-                  className="block text-[clamp(3.5rem,10vw,8.5rem)] leading-[1.05] font-black italic pr-8"
+                  className="block text-[clamp(2.75rem,12vw,8.5rem)] leading-[1.05] font-black italic pr-8"
                 >
                   {(!theme || theme === 'default') && (
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient">DIGITAL</span>
@@ -474,11 +433,7 @@ function HeroOverlay({ scrollProgress }) {
                     </span>
                   )}
                   {theme === 'cryo' && (
-                    <span className="relative inline-block">
-                      {'DIGITAL'.split('').map((ch, i) => (
-                        <span key={i} className="theme-cryo-char" style={{ animationDelay: `${i * 0.18}s` }}>{ch}</span>
-                      ))}
-                    </span>
+                    <span className="theme-cryo-char" data-text="DIGITAL">DIGITAL</span>
                   )}
                 </motion.span>
                 <motion.div
@@ -494,7 +449,7 @@ function HeroOverlay({ scrollProgress }) {
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.7 } }}
                   whileHover={!theme || theme === 'default' ? { color: "rgba(59, 130, 246, 0)", WebkitTextStroke: "2px rgba(59, 130, 246, 0.9)", textShadow: "0 0 30px rgba(59, 130, 246, 0.4)", transition: { duration: 0.5, ease: "easeInOut" } } : {}}
                   style={(!theme || theme === 'default') ? { color: "#ffffff" } : {}}
-                  className="block text-[clamp(3.5rem,10vw,8.5rem)] leading-[1.05] font-black italic pr-8"
+                  className="block text-[clamp(2.75rem,12vw,8.5rem)] leading-[1.05] font-black italic pr-8"
                 >
                   <ThemeTextWrapper theme={theme}>PRESENCE</ThemeTextWrapper>
                 </motion.span>
@@ -514,7 +469,7 @@ function HeroOverlay({ scrollProgress }) {
               */
               style={{ position: "relative", top: "0px" }}
             >
-              <p className="text-white/50 text-lg sm:text-xl font-light font-sans leading-loose py-2 pr-6 overflow-visible">
+              <p className={`text-lg sm:text-xl font-light font-sans leading-loose py-2 pr-6 overflow-visible ${theme === 'cryo' ? 'text-white font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]' : 'text-white/50'}`}>
                 We bridge the gap between imagination and execution, building 
                 high-performance digital assets that define the new standard.
               </p>
@@ -594,14 +549,14 @@ function HeroOverlay({ scrollProgress }) {
       {/* Scroll Indicator */}
       <motion.div
         style={{ opacity: s1L5Opacity, visibility: s1L5Visibility }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 pointer-events-none"
+        className="absolute bottom-24 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 pointer-events-none"
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center gap-2"
         >
-          <div className="w-[22px] h-[36px] rounded-full border-2 border-white/20 flex justify-center pt-2 bg-white/5 backdrop-blur-sm">
+          <div className={`w-[22px] h-[36px] rounded-full border-2 flex justify-center pt-2 backdrop-blur-sm ${theme === 'cryo' ? 'border-white/40 bg-black/20 shadow-[0_0_15px_rgba(0,0,0,0.5)]' : 'border-white/20 bg-white/5'}`}>
             <motion.div
               animate={{ y: [0, 10, 0], opacity: [1, 0, 1] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
@@ -616,7 +571,7 @@ function HeroOverlay({ scrollProgress }) {
             />
           </div>
         </motion.div>
-        <span className="text-white/30 text-[9px] font-bold tracking-[0.4em] uppercase font-syne whitespace-nowrap">
+        <span className={`text-[9px] font-bold tracking-[0.4em] uppercase font-syne whitespace-nowrap ${theme === 'cryo' ? 'text-white drop-shadow-[0_2px_10px_rgba(0,0,0,1)]' : 'text-white/30'}`}>
           Scroll to explore
         </span>
       </motion.div>
@@ -647,71 +602,6 @@ function AutomovingObjects() {
   );
 }
 
-function MobileHeroSection() {
-  const { theme } = useTheme();
-  return (
-    <section id="hero-mobile" className="relative w-full min-h-screen bg-[#010103] flex flex-col items-center justify-center pt-32 pb-24 px-6 overflow-hidden md:hidden">
-      {/* Simplified Mobile Background */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <ThemeBackground />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#010103] via-transparent to-[#010103]" />
-      </div>
-
-      <div className="z-20 w-full max-w-lg mx-auto flex flex-col items-start gap-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          whileInView={{ opacity: 1, y: 0 }} 
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-4">
-            <div className="h-[1px] w-8 bg-cyan-400/50" />
-            <span className="text-cyan-400 text-[10px] font-bold tracking-[0.3em] uppercase font-syne">Transform Your Business</span>
-          </div>
-        </motion.div>
-
-        <motion.h1 
-          initial={{ opacity: 0, y: 30 }} 
-          whileInView={{ opacity: 1, y: 0 }} 
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-bricolage text-5xl font-black italic text-white tracking-tighter leading-[1.1]"
-        >
-          THE FUTURE <br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient">OF YOUR DIGITAL</span> <br/>
-          PRESENCE
-        </motion.h1>
-
-        <motion.p 
-          initial={{ opacity: 0 }} 
-          whileInView={{ opacity: 1 }} 
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-white/60 text-base leading-relaxed font-light pr-4"
-        >
-          We bridge the gap between imagination and execution, building high-performance digital assets that define the new standard.
-        </motion.p>
-
-        <motion.button 
-          initial={{ opacity: 0, scale: 0.95 }} 
-          whileInView={{ opacity: 1, scale: 1 }} 
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, delay: 0.5, type: "spring" }}
-          onClick={() => {
-            const contact = document.getElementById("contact");
-            if (contact) contact.scrollIntoView({ behavior: "smooth" });
-          }}
-          className="w-full mt-4 px-6 py-4 rounded-full bg-white text-black font-syne font-bold uppercase tracking-wider text-[13px] shadow-[0_0_30px_rgba(0,255,224,0.2)] flex justify-center items-center gap-2"
-        >
-          Claim Your Free Custom Demo
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </motion.button>
-      </div>
-    </section>
-  );
-}
 
 export default function HeroSection() {
   useInjectHeroStyles();
@@ -723,13 +613,10 @@ export default function HeroSection() {
   });
 
   return (
-    <>
-      <MobileHeroSection />
-
       <section
         ref={containerRef}
         id="hero"
-        className="relative w-full h-[500vh] bg-[#010103] hidden md:block"
+        className="relative w-full h-[500vh] bg-[#010103]"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden isolate">
           <ThemeBackground />
@@ -738,6 +625,5 @@ export default function HeroSection() {
           <HeroOverlay scrollProgress={scrollYProgress} />
         </div>
       </section>
-    </>
-  );
+    );
 }
