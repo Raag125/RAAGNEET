@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 
 const sectionLabels = {
   hero: "Hero",
-  "what-we-build": "What We Build",
   trust: "Trust",
+  "what-we-build": "What We Build",
   marquee: "Marquee",
   "value-proposition": "Value",
   portfolio: "Work",

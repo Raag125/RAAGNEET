@@ -97,8 +97,8 @@ export default function Home() {
       <HeroSection />
       
       <div className="flex flex-col relative z-10 w-full">
-        <div id="what-we-build"><WhatWeBuild /></div>
         <div id="trust"><TrustSection /></div>
+        <div id="what-we-build"><WhatWeBuild /></div>
         <div id="marquee" className="py-24"><MarqueeSection /></div>
         <div id="value-proposition"><ValueProposition /></div>
         <div id="portfolio"><Portfolio /></div>

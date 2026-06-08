@@ -9,7 +9,7 @@
  */
 
 import { useRef, useInsertionEffect, useState, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionValueEvent } from 'framer-motion';
 import ParticleField from '@/components/animations/ParticleField';
 import ThemeBackground from '@/components/ThemeBackground';
 import { useTheme } from '@/context/ThemeContext';
@@ -59,6 +59,54 @@ function useInjectHeroStyles() {
         background-size: 200% auto;
         animation: gradient-shift 8s linear infinite;
       }
+      
+      /* Periodic Auto Hover Effects */
+      @keyframes auto-glow-text-1 {
+        0%, 80%, 100% {
+          color: #ffffff;
+          -webkit-text-stroke: 0px rgba(0,255,224,0);
+          text-shadow: none;
+        }
+        88%, 92% {
+          color: rgba(0, 255, 224, 0);
+          -webkit-text-stroke: 2px rgba(0, 255, 224, 0.9);
+          text-shadow: 0 0 30px rgba(0, 255, 224, 0.4);
+        }
+      }
+      @keyframes auto-glow-text-2 {
+        0%, 80%, 100% {
+          color: #ffffff;
+          -webkit-text-stroke: 0px rgba(59,130,246,0);
+          text-shadow: none;
+        }
+        88%, 92% {
+          color: rgba(59, 130, 246, 0);
+          -webkit-text-stroke: 2px rgba(59, 130, 246, 0.9);
+      .theme-default-glow {
+        transition: all 0.5s ease-in-out;
+      }
+      .theme-default-glow:hover {
+        animation: none !important;
+        color: rgba(0, 255, 224, 0) !important;
+        -webkit-text-stroke: 2px rgba(0, 255, 224, 0.9) !important;
+        text-shadow: 0 0 30px rgba(0, 255, 224, 0.4) !important;
+      }
+      .theme-default-glow-2 {
+        transition: all 0.5s ease-in-out;
+      }
+      .theme-default-glow-2:hover {
+        animation: none !important;
+        color: rgba(59, 130, 246, 0) !important;
+        -webkit-text-stroke: 2px rgba(59, 130, 246, 0.9) !important;
+        text-shadow: 0 0 30px rgba(59, 130, 246, 0.4) !important;
+      }
+      .auto-glow-1 { 
+        animation: auto-glow-text-1 6s ease-in-out infinite; 
+      }
+      .auto-glow-2 { 
+        animation: auto-glow-text-2 6s ease-in-out infinite 0.5s; 
+      }
+
       /* === CRYO: Frozen Ice Text === */
       .theme-cryo-char {
         display: inline-block;
@@ -300,6 +348,11 @@ function HeroOverlay({ scrollProgress }) {
   const { theme } = useTheme();
   const [ripples, setRipples] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useMotionValueEvent(scrollProgress, "change", (latest) => {
+    setIsScrolled(latest > 0.05);
+  });
 
   const handleCtaClick = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -409,9 +462,8 @@ function HeroOverlay({ scrollProgress }) {
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 } }}
-                  whileHover={!theme || theme === 'default' ? { color: "rgba(0, 255, 224, 0)", WebkitTextStroke: "2px rgba(0, 255, 224, 0.9)", textShadow: "0 0 30px rgba(0, 255, 224, 0.4)", transition: { duration: 0.5, ease: "easeInOut" } } : {}}
                   style={(!theme || theme === 'default') ? { color: "#ffffff" } : {}}
-                  className="block text-[clamp(2rem,8vw,6.5rem)] leading-[1.05] font-black italic pr-6"
+                  className={`block text-[clamp(2rem,8vw,6.5rem)] leading-[1.05] font-black italic pr-6 ${(!theme || theme === 'default') ? `theme-default-glow ${!isScrolled ? 'auto-glow-1' : ''}` : ''}`}
                 >
                   <ThemeTextWrapper theme={theme}>THE FUTURE OF YOUR</ThemeTextWrapper>
                 </motion.span>
@@ -447,9 +499,8 @@ function HeroOverlay({ scrollProgress }) {
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.7 } }}
-                  whileHover={!theme || theme === 'default' ? { color: "rgba(59, 130, 246, 0)", WebkitTextStroke: "2px rgba(59, 130, 246, 0.9)", textShadow: "0 0 30px rgba(59, 130, 246, 0.4)", transition: { duration: 0.5, ease: "easeInOut" } } : {}}
                   style={(!theme || theme === 'default') ? { color: "#ffffff" } : {}}
-                  className="block text-[clamp(2.75rem,12vw,8.5rem)] leading-[1.05] font-black italic pr-8"
+                  className={`block text-[clamp(2.75rem,12vw,8.5rem)] leading-[1.05] font-black italic pr-8 ${(!theme || theme === 'default') ? `theme-default-glow-2 ${!isScrolled ? 'auto-glow-2' : ''}` : ''}`}
                 >
                   <ThemeTextWrapper theme={theme}>PRESENCE</ThemeTextWrapper>
                 </motion.span>
