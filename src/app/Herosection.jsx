@@ -10,9 +10,11 @@
 
 import { useRef, useInsertionEffect, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionValueEvent } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import ParticleField from '@/components/animations/ParticleField';
 import ThemeBackground from '@/components/ThemeBackground';
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme } from "@/context/ThemeContext";
+import ThemePanel from "@/components/ThemePanel";
 
 // --- SILENCE THREE.JS CLOCK WARNING ------------------------------------------
 if (typeof console !== 'undefined') {
@@ -82,6 +84,9 @@ function useInjectHeroStyles() {
         88%, 92% {
           color: rgba(59, 130, 246, 0);
           -webkit-text-stroke: 2px rgba(59, 130, 246, 0.9);
+          text-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+        }
+      }
       .theme-default-glow {
         transition: all 0.5s ease-in-out;
       }
@@ -354,13 +359,18 @@ function HeroOverlay({ scrollProgress }) {
     setIsScrolled(latest > 0.05);
   });
 
+  const router = useRouter();
+
   const handleCtaClick = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const id = Date.now() + Math.random();
     setRipples((prev) => [...prev, { id, x, y }]);
-    setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 800);
+    setTimeout(() => {
+      setRipples((prev) => prev.filter((r) => r.id !== id));
+      router.push('/request-deployment');
+    }, 400); // Route halfway through ripple animation
   };
 
   // ----------------------------------------------------
@@ -376,29 +386,24 @@ function HeroOverlay({ scrollProgress }) {
   const scene1Visibility = useTransform(scrollProgress, p => p > 0.50 ? 'hidden' : 'visible');
   
   // Line 1: Transform Your Business
-  const s1L1Opacity = useTransform(scrollProgress, [0.10, 0.18], [1, 0]);
-  const s1L1Y = useTransform(scrollProgress, [0.10, 0.18], [0, -30]);
-  const s1L1Visibility = useTransform(scrollProgress, p => p > 0.185 ? 'hidden' : 'visible');
+  const s1L1Opacity = useTransform(scrollProgress, [0, 0.10, 0.18, 1], [1, 1, 0, 0]);
+  const s1L1Y = useTransform(scrollProgress, [0, 0.10, 0.18, 1], [0, 0, -30, -30]);
 
   // Line 2: THE FUTURE OF YOUR
-  const s1L2Opacity = useTransform(scrollProgress, [0.18, 0.26], [1, 0]);
-  const s1L2Y = useTransform(scrollProgress, [0.18, 0.26], [0, -30]);
-  const s1L2Visibility = useTransform(scrollProgress, p => p > 0.265 ? 'hidden' : 'visible');
+  const s1L2Opacity = useTransform(scrollProgress, [0, 0.18, 0.26, 1], [1, 1, 0, 0]);
+  const s1L2Y = useTransform(scrollProgress, [0, 0.18, 0.26, 1], [0, 0, -30, -30]);
 
   // Line 3: DIGITAL
-  const s1L3Opacity = useTransform(scrollProgress, [0.26, 0.34], [1, 0]);
-  const s1L3Y = useTransform(scrollProgress, [0.26, 0.34], [0, -30]);
-  const s1L3Visibility = useTransform(scrollProgress, p => p > 0.345 ? 'hidden' : 'visible');
+  const s1L3Opacity = useTransform(scrollProgress, [0, 0.26, 0.34, 1], [1, 1, 0, 0]);
+  const s1L3Y = useTransform(scrollProgress, [0, 0.26, 0.34, 1], [0, 0, -30, -30]);
 
   // Line 4: PRESENCE
-  const s1L4Opacity = useTransform(scrollProgress, [0.34, 0.42], [1, 0]);
-  const s1L4Y = useTransform(scrollProgress, [0.34, 0.42], [0, -30]);
-  const s1L4Visibility = useTransform(scrollProgress, p => p > 0.425 ? 'hidden' : 'visible');
+  const s1L4Opacity = useTransform(scrollProgress, [0, 0.34, 0.42, 1], [1, 1, 0, 0]);
+  const s1L4Y = useTransform(scrollProgress, [0, 0.34, 0.42, 1], [0, 0, -30, -30]);
 
   // Line 5: Paragraph & Scroll Indicator
-  const s1L5Opacity = useTransform(scrollProgress, [0.42, 0.50], [1, 0]);
-  const s1L5Y = useTransform(scrollProgress, [0.42, 0.50], [0, -30]);
-  const s1L5Visibility = useTransform(scrollProgress, p => p > 0.505 ? 'hidden' : 'visible');
+  const s1L5Opacity = useTransform(scrollProgress, [0, 0.42, 0.50, 1], [1, 1, 0, 0]);
+  const s1L5Y = useTransform(scrollProgress, [0, 0.42, 0.50, 1], [0, 0, -30, -30]);
 
   // Scene 2 Base Wrapper
   const scene2Visibility = useTransform(scrollProgress, p => p < 0.50 || p > 0.95 ? 'hidden' : 'visible');
@@ -434,7 +439,7 @@ function HeroOverlay({ scrollProgress }) {
           */
           className="w-full flex flex-col items-start text-left pointer-events-none"
         >
-          <motion.div style={{ opacity: s1L1Opacity, y: s1L1Y, visibility: s1L1Visibility }}>
+          <motion.div style={{ opacity: s1L1Opacity, y: s1L1Y }}>
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -456,7 +461,7 @@ function HeroOverlay({ scrollProgress }) {
             >
               <motion.div
                 /* 👇 ADJUST THE VALUE BELOW TO SHIFT "THE FUTURE OF YOUR" RIGHT/LEFT 👇 */
-                style={{ opacity: s1L2Opacity, y: s1L2Y, marginLeft: "0px", visibility: s1L2Visibility }}
+                style={{ opacity: s1L2Opacity, y: s1L2Y, marginLeft: "0px" }}
                 className="py-1 overflow-visible"
               >
                 <motion.span
@@ -468,7 +473,7 @@ function HeroOverlay({ scrollProgress }) {
                   <ThemeTextWrapper theme={theme}>THE FUTURE OF YOUR</ThemeTextWrapper>
                 </motion.span>
               </motion.div>
-              <motion.div style={{ opacity: s1L3Opacity, y: s1L3Y, visibility: s1L3Visibility }} className="flex items-center gap-4 py-1 overflow-visible">
+              <motion.div style={{ opacity: s1L3Opacity, y: s1L3Y }} className="flex items-center gap-4 py-1 overflow-visible">
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.55 } }}
@@ -495,7 +500,7 @@ function HeroOverlay({ scrollProgress }) {
                   className="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_20px_rgba(0,255,224,0.8)] hidden sm:block flex-shrink-0"
                 />
               </motion.div>
-              <motion.div style={{ opacity: s1L4Opacity, y: s1L4Y, visibility: s1L4Visibility }} className="py-1 overflow-visible">
+              <motion.h2 style={{ opacity: s1L4Opacity, y: s1L4Y }} className="py-1 overflow-visible">
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.7 } }}
@@ -504,11 +509,11 @@ function HeroOverlay({ scrollProgress }) {
                 >
                   <ThemeTextWrapper theme={theme}>PRESENCE</ThemeTextWrapper>
                 </motion.span>
-              </motion.div>
+              </motion.h2>
             </motion.h1>
           </motion.div>
 
-          <motion.div style={{ opacity: s1L5Opacity, y: s1L5Y, visibility: s1L5Visibility }}>
+          <motion.div style={{ opacity: s1L5Opacity, y: s1L5Y }}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -599,7 +604,7 @@ function HeroOverlay({ scrollProgress }) {
 
       {/* Scroll Indicator */}
       <motion.div
-        style={{ opacity: s1L5Opacity, visibility: s1L5Visibility }}
+        style={{ opacity: s1L5Opacity }}
         className="absolute bottom-24 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 pointer-events-none"
       >
         <motion.div
@@ -674,6 +679,7 @@ export default function HeroSection() {
           <HeroBackground />
           <AutomovingObjects />
           <HeroOverlay scrollProgress={scrollYProgress} />
+          <ThemePanel />
         </div>
       </section>
     );

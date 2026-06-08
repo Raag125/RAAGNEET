@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import ThemePanel from "./ThemePanel";
 
 export default function SharedNavbar() {
   const pathname = usePathname();
@@ -110,28 +109,16 @@ export default function SharedNavbar() {
 
           {/* Right */}
           <div className="flex items-center gap-1.5 z-10 shrink-0">
-            <Link href="/amoled">
+            <Link href="/request-deployment">
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/15 text-white/70 text-sm font-medium tracking-wide transition-all duration-200 hover:border-[#00FFE0]/40 hover:text-[#00FFE0] hover:shadow-[0_0_16px_rgba(0,255,224,0.08)]"
+                className="hidden sm:flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-cyan-400/40 text-cyan-400 text-sm font-bold tracking-wide transition-all duration-200 hover:border-cyan-400 hover:bg-cyan-400/10 hover:shadow-[0_0_16px_rgba(0,255,224,0.2)]"
               >
-                Tech Stack
+                Request Deployment
               </motion.button>
             </Link>
-            <Link href="/momo">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/15 text-white/70 text-sm font-medium tracking-wide transition-all duration-200 hover:border-[#00FFE0]/40 hover:text-[#00FFE0] hover:shadow-[0_0_16px_rgba(0,255,224,0.08)]"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00FFE0] shadow-[0_0_4px_#00FFE0]" />
-                Momo
-              </motion.button>
-            </Link>
-            <div className="relative flex items-center justify-center">
-              <ThemePanel />
-            </div>
+
             <MobileMenuButton pathname={pathname} links={links} />
           </div>
         </div>
@@ -191,6 +178,13 @@ function MobileMenuButton({ pathname, links }) {
                   </Link>
                 );
               })}
+              <div className="h-px w-full bg-white/10 my-1"></div>
+              <Link
+                href="/request-deployment"
+                className="relative px-3.5 py-2.5 mt-1 rounded-xl text-sm font-bold text-[#010103] bg-gradient-to-r from-cyan-400 to-blue-500 text-center transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,255,224,0.4)]"
+              >
+                Request Deployment
+              </Link>
             </div>
           </motion.div>
         )}

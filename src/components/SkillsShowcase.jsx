@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
+import Link from "next/link";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import {
   Code2, Palette, Database, Layout, Blocks, Braces, Globe,
@@ -309,6 +310,11 @@ export default function SkillsShowcase() {
             transition={{ delay: 0.45, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-wrap items-center justify-center gap-4 mt-10"
           >
+            <MagneticButton strength={0.2}>
+              <Link href="/amoled" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-cyan-400/40 text-cyan-400 text-sm font-bold tracking-wide hover:bg-cyan-400/10 hover:shadow-[0_0_16px_rgba(0,255,224,0.2)] transition-all duration-300">
+                View Full Tech Stack <ArrowRight className="w-4 h-4" />
+              </Link>
+            </MagneticButton>
           </motion.div>
         </motion.div>
 
