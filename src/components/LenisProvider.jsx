@@ -18,7 +18,7 @@ export default function LenisProvider({ children }) {
       smooth: true,
       smoothWheel: true,
       lerp: 0.08,
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.5,
       smoothTouch: false,
       touchMultiplier: 2,
       infinite: false,

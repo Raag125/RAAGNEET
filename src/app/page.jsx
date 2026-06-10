@@ -9,6 +9,7 @@ import ValueProposition from "@/components/ValueProposition";
 import Portfolio from "@/components/Portfolio";
 import ContactUs from "@/components/ContactUs";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
+import SectionScroller from "@/components/SectionScroller";
 /* ── Inject glass keyframes once ── */
 function useGlassStyles() {
   useInsertionEffect(() => {
@@ -106,6 +107,7 @@ export default function Home() {
       </div>
 
       <ScrollProgressBar />
+      <SectionScroller />
 
       {/* Sleek Minimal Footer */}
       <footer className="relative w-full border-t border-white/[0.05] bg-[#010103] py-6 px-6 z-10">

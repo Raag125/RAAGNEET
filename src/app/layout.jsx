@@ -37,8 +37,30 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${bricolage.variable} antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function lockScale() {
+                  // Locks the scale strictly to 1.1 on all desktop screens.
+                  // Does not use any ratio math, preventing cards from becoming huge on large displays.
+                  if (window.innerWidth >= 1024) {
+                    document.documentElement.style.zoom = 1.1;
+                  } else {
+                    document.documentElement.style.zoom = 1.0;
+                  }
+                }
+                lockScale();
+                window.addEventListener('resize', lockScale);
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="flex flex-col bg-[#010103] relative min-h-screen">
         <ThemeProvider>
           <LenisProvider>

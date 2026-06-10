@@ -447,16 +447,16 @@ function AuroraTheme() {
 
       {/* Wind Speed Controls */}
       {mounted && createPortal(
-        <div className="fixed top-24 right-4 sm:right-8 z-[9999] flex items-center gap-3 bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 p-2 rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.5)] pointer-events-auto">
+        <div className="fixed top-[130px] right-6 sm:top-[140px] sm:right-10 z-[9999] flex items-center gap-3 bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 p-2 rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.5)] pointer-events-auto">
           <button
-            onClick={() => { speedMultiplierRef.current = Math.max(0.1, speedMultiplierRef.current - 0.4); }}
+            onClick={() => { speedMultiplierRef.current = Math.max(0.01, speedMultiplierRef.current - 0.1); }}
             className="px-4 py-1.5 text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
           >
             Slower
           </button>
           <div className="w-px h-4 bg-white/20"></div>
           <button
-            onClick={() => { speedMultiplierRef.current = Math.min(5.0, speedMultiplierRef.current + 0.4); }}
+            onClick={() => { speedMultiplierRef.current = Math.min(5.0, speedMultiplierRef.current + 0.2); }}
             className="px-4 py-1.5 text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
           >
             Faster

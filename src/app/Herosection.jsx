@@ -179,7 +179,7 @@ function ShootingStars() {
     { id: 5, top: '30%', left: '120%', delay: 4.8, duration: 2.6, size: 100 },
     { id: 6, top: '50%', left: '130%', delay: 6.0, duration: 3.0, size: 90 },
   ];
-  
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       {stars.map((star) => (
@@ -217,7 +217,7 @@ function HeroBackground() {
   return (
     <div className="absolute inset-0 -z-20 overflow-hidden pointer-events-none">
       {/* Deep Base Gradient (Removed to allow global theme to show) */}
-      
+
       {/* Ambient Particle Field */}
       <ParticleField count={120} className="opacity-40" />
 
@@ -384,7 +384,7 @@ function HeroOverlay({ scrollProgress }) {
 
   // Scene 1 Sequential Line-by-Line Exit
   const scene1Visibility = useTransform(scrollProgress, p => p > 0.50 ? 'hidden' : 'visible');
-  
+
   // Line 1: Transform Your Business
   const s1L1Opacity = useTransform(scrollProgress, [0, 0.10, 0.18, 1], [1, 1, 0, 0]);
   const s1L1Y = useTransform(scrollProgress, [0, 0.10, 0.18, 1], [0, 0, -30, -30]);
@@ -407,7 +407,7 @@ function HeroOverlay({ scrollProgress }) {
 
   // Scene 2 Base Wrapper
   const scene2Visibility = useTransform(scrollProgress, p => p < 0.50 || p > 0.95 ? 'hidden' : 'visible');
-  
+
   // Scene 2 Drop Entrance & Exit
   // "READY TO"
   const scene2Text1Opacity = useTransform(scrollProgress, [0.50, 0.58, 0.80, 0.88], [0, 1, 1, 0]);
@@ -437,7 +437,7 @@ function HeroOverlay({ scrollProgress }) {
             🛠️ TO MOVE THE ENTIRE HERO BLOCK UP OR DOWN:
             Add 'mt-[-50px]' or 'pt-20' to this className below.
           */
-          className="w-full flex flex-col items-start text-left pointer-events-none"
+          className="w-full flex flex-col items-start text-left pointer-events-none -mt-24 lg:-mt-15"
         >
           <motion.div style={{ opacity: s1L1Opacity, y: s1L1Y }}>
             <motion.div
@@ -456,7 +456,9 @@ function HeroOverlay({ scrollProgress }) {
           <motion.div
             className="relative pointer-events-auto perspective-[1000px] mt-4 sm:mt-[70px]"
           >
-            <motion.h1
+            <motion.div
+              role="heading"
+              aria-level="1"
               className="flex flex-col gap-2 font-bricolage tracking-tighter cursor-default"
             >
               <motion.div
@@ -500,7 +502,7 @@ function HeroOverlay({ scrollProgress }) {
                   className="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_20px_rgba(0,255,224,0.8)] hidden sm:block flex-shrink-0"
                 />
               </motion.div>
-              <motion.h2 style={{ opacity: s1L4Opacity, y: s1L4Y }} className="py-1 overflow-visible">
+              <motion.div style={{ opacity: s1L4Opacity, y: s1L4Y }} className="py-1 overflow-visible">
                 <motion.span
                   initial={{ y: 50, rotateX: -30, opacity: 0, filter: "blur(15px)" }}
                   animate={{ y: 0, rotateX: 0, opacity: 1, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.7 } }}
@@ -509,8 +511,8 @@ function HeroOverlay({ scrollProgress }) {
                 >
                   <ThemeTextWrapper theme={theme}>PRESENCE</ThemeTextWrapper>
                 </motion.span>
-              </motion.h2>
-            </motion.h1>
+              </motion.div>
+            </motion.div>
           </motion.div>
 
           <motion.div style={{ opacity: s1L5Opacity, y: s1L5Y }}>
@@ -526,7 +528,7 @@ function HeroOverlay({ scrollProgress }) {
               style={{ position: "relative", top: "0px" }}
             >
               <p className={`text-lg sm:text-xl font-light font-sans leading-loose py-2 pr-6 overflow-visible ${theme === 'cryo' ? 'text-white font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]' : 'text-white/50'}`}>
-                We bridge the gap between imagination and execution, building 
+                We bridge the gap between imagination and execution, building
                 high-performance digital assets that define the new standard.
               </p>
             </motion.div>
@@ -568,7 +570,7 @@ function HeroOverlay({ scrollProgress }) {
             >
               {/* Ambient Inner Glow */}
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/10 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
+
               {/* Shimmer Sweep Effect */}
               <div className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 animate-shimmer transition-opacity duration-300" />
 
@@ -669,18 +671,18 @@ export default function HeroSection() {
   });
 
   return (
-      <section
-        ref={containerRef}
-        id="hero"
-        className="relative w-full h-[500vh] bg-[#010103]"
-      >
-        <div className="sticky top-0 h-screen w-full overflow-hidden isolate">
-          <ThemeBackground />
-          <HeroBackground />
-          <AutomovingObjects />
-          <HeroOverlay scrollProgress={scrollYProgress} />
-          <ThemePanel />
-        </div>
-      </section>
-    );
+    <section
+      ref={containerRef}
+      id="hero"
+      className="relative w-full h-[500vh] bg-[#010103]"
+    >
+      <div className="sticky top-0 h-screen w-full overflow-hidden isolate">
+        <ThemeBackground />
+        <HeroBackground />
+        <AutomovingObjects />
+        <HeroOverlay scrollProgress={scrollYProgress} />
+        <ThemePanel />
+      </div>
+    </section>
+  );
 }

@@ -12,6 +12,20 @@ export function ThemeProvider({ children }) {
     document.body.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // Auto-change theme every 3 minutes (180,000 ms)
+  useEffect(() => {
+    const themes = ["default", "cryo", "monsoon", "aurora"];
+    const interval = setInterval(() => {
+      setTheme((prevTheme) => {
+        const currentIndex = themes.indexOf(prevTheme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        return themes[nextIndex];
+      });
+    }, 3 * 60 * 1000); // 3 minutes
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}

@@ -4,6 +4,34 @@ import React, { useState, useRef, useEffect } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 
+function BeautifulClock() {
+  const [time, setTime] = useState(null);
+
+  useEffect(() => {
+    setTime(new Date());
+    const interval = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  };
+
+  if (!time) return null;
+
+  return (
+    <motion.div 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="fixed top-4 right-6 sm:top-6 sm:right-10 z-[100] flex items-center justify-center pointer-events-none"
+    >
+      <span className="font-bricolage font-black text-lg sm:text-2xl tracking-widest text-transparent bg-clip-text bg-gradient-to-br from-white via-cyan-100 to-cyan-500 drop-shadow-[0_0_15px_rgba(0,255,224,0.6)]">
+        {formatTime(time)}
+      </span>
+    </motion.div>
+  );
+}
+
 export default function ThemePanel() {
   const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
@@ -30,9 +58,11 @@ export default function ThemePanel() {
   const currentTheme = themes.find((t) => t.id === theme) || themes[0];
 
   return (
-    <div className="absolute top-[70px] right-6 sm:top-[85px] sm:right-10 z-[100] pointer-events-auto">
-      <div className="flex flex-row items-center gap-1.5 p-1.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
-        {themes.map((t) => (
+    <>
+      <BeautifulClock />
+      <div className="absolute top-[70px] right-6 sm:top-[85px] sm:right-10 z-[100] pointer-events-auto">
+        <div className="flex flex-row items-center gap-1.5 p-1.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+          {themes.map((t) => (
           <button
             key={t.id}
             onClick={() => setTheme(t.id)}
@@ -46,7 +76,8 @@ export default function ThemePanel() {
             <span className="text-xs sm:text-sm leading-none relative top-[1px]">{t.icon}</span>
           </button>
         ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

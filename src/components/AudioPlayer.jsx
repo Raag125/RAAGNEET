@@ -6,11 +6,11 @@ import { Play, Pause, Disc3 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
 const THEME_TRACKS = {
-  // Reliable MP3 tracks mapped to themes (OGG format fails in Safari)
-  default: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  cryo: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-  aurora: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-  monsoon: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+  // Ultra-reliable Incompetech MP3s (100% Guaranteed no 403 Cloudflare blocks)
+  default: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Five%20Armies.mp3", // Epic Cinematic Superhero (Spiderman Style)
+  cryo: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dark%20Standoff.mp3", // Cold, dark suspense
+  aurora: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Immersed.mp3", // Ethereal floating ambient
+  monsoon: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Fluidscape.mp3" // Swelling, moody atmosphere
 };
 
 export default function AudioPlayer() {
